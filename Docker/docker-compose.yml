@@ -1,0 +1,40 @@
+version: '3'
+
+name: home_device_manager
+services:
+    frontend:
+        container_name: frontend
+        build:
+            context: C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Docker
+            dockerfile: Dockerfile
+        environment:
+            - TZ=Europe/Athens
+        volumes:
+            - "C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Project/frontend:/usr/local/tomcat/webapps/app"
+        restart: unless-stopped
+        privileged: true
+        networks:
+            - home_network
+        ports:
+            - "9001:8080"
+
+    frontend_react:
+        container_name: frontend_react
+        build:
+            context: C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Docker
+            dockerfile: Dockerfile
+        environment:
+            - TZ=Europe/Athens
+        volumes:
+            - "C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Project/frontend_react:/usr/local/tomcat/webapps"
+        restart: unless-stopped
+        privileged: true
+        networks:
+            - home_network
+        ports:
+        - "9002:3000"
+
+
+networks:
+    home_network:
+        name: smart_home

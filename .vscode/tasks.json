@@ -1,0 +1,25 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "docker build image",
+            "type": "shell",
+            "command": "docker-compose up --build -d",
+            "options": {
+                "cwd": "${workspaceFolder}\\Docker"                
+            }
+        },
+        {
+            "label": "docker frontend terminal",
+            "type": "shell",
+            "command": "docker exec -it frontend bash"
+        },
+        {
+            "label": "docker frontend_react terminal",
+            "type": "shell",
+            "command": "docker exec -it frontend_react bash"
+        }
+    ]
+}
