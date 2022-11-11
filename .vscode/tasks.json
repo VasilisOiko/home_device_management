@@ -4,7 +4,15 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "docker build image",
+            "label": "docker build containers",
+            "type": "shell",
+            "command": "docker-compose up -d",
+            "options": {
+                "cwd": "${workspaceFolder}\\Docker"                
+            }
+        },
+        {
+            "label": "docker build images",
             "type": "shell",
             "command": "docker-compose up --build -d",
             "options": {

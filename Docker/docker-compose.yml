@@ -4,8 +4,9 @@ name: home_device_manager
 services:
     frontend:
         container_name: frontend
+        image: "tomcat_env"
         build:
-            context: C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Docker
+            context: C:/Users/Billy Oiko/Documents/Programming/Docker/Tomcat
             dockerfile: Dockerfile
         environment:
             - TZ=Europe/Athens
@@ -20,20 +21,22 @@ services:
 
     frontend_react:
         container_name: frontend_react
+        image: react_env
         build:
-            context: C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Docker
+            context: C:/Users/Billy Oiko/Documents/Programming/Docker/React
             dockerfile: Dockerfile
+        command: tail -F anything
         environment:
             - TZ=Europe/Athens
+            - CHOKIDAR_USEPOLLING=true
         volumes:
-            - "C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Project/frontend_react:/usr/local/tomcat/webapps"
+            - "C:/Users/Billy Oiko/Documents/Programming/Projects/Diploma Thesis/home_device_management/Project/react:/home/app"
         restart: unless-stopped
         privileged: true
         networks:
             - home_network
         ports:
         - "9002:3000"
-
 
 networks:
     home_network:
