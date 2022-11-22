@@ -25,7 +25,7 @@
             "command": "docker exec -it frontend bash"
         },
         {
-            "label": "docker frontend_react terminal",
+            "label": "docker react terminal",
             "type": "shell",
             "command": "docker exec -it frontend_react bash"
         }

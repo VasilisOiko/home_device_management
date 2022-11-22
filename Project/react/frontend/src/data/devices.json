@@ -1,0 +1,61 @@
+[
+    {
+        "id": 1,
+        "device":
+        [
+            {
+                "type": "Light",
+                "name": "Main light"
+            },
+            {
+                "type": "Smart TV",
+                "name": "TV"
+            },
+            {
+                "type": "Smart plug",
+                "name": "Heater"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "device":
+        [
+            {
+                "type": "Light",
+                "name": "Left bed light"
+            },
+            {
+                "type": "Light",
+                "name": "Right bed light"
+            },
+            {
+                "type": "Light",
+                "name": "Main light"
+            },
+            {
+                "type": "Smart TV",
+                "name": "Bedroom TV"
+            }
+        ]
+
+    },
+    {
+        "id": 3,
+        "device":
+        [
+            {
+                "type": "Light",
+                "name": "Main light"
+            },
+            {
+                "type": "Smart plug",
+                "name": "Refrigerator"
+            },
+            {
+                "type": "Smart plug",
+                "name": "Electric stove"
+            }
+        ]
+    }
+]

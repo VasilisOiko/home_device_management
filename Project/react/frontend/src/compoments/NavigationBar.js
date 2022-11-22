@@ -3,9 +3,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 
-function ColorSchemesExample() {
+function NavigationBar() {
   return (
-    <>
+    <div>
       <Navbar bg="dark" variant="dark">
         <Container>
           <Navbar.Brand href="#home">Home Device Manager</Navbar.Brand>
@@ -16,8 +16,8 @@ function ColorSchemesExample() {
           </Nav>
         </Container>
       </Navbar>
-    </>
+    </div>
   );
 }
 
-export default ColorSchemesExample;
+export default NavigationBar;
