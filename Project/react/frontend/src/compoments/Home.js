@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 
 /* my components */
 import Scenes from './Home/Scenes'
+import Devices from './Home/Devices'
 
 /* my data */
 import scenesData from '../data/scenes.json'
@@ -20,7 +21,7 @@ class Home extends Component{
       sceneID: scenesData[0].id,
       sceneName: scenesData[0].name
     }
-
+    
     this.sceneSelector = this.sceneSelector.bind(this)
   }
 
@@ -53,10 +54,10 @@ class Home extends Component{
       // console.log(this.state)
       return ( 
         <Stack gap={3}>
-          <Scenes activeScene={this.state} sceneSelect={this.sceneSelector}/>
+          <Scenes scene={this.state} sceneSelect={this.sceneSelector}/>
           <Row>
             <Col>
-              Devices
+              <Devices id={this.state.sceneID}/>
             </Col>
           </Row>
         </Stack>
