@@ -19,7 +19,7 @@ function App() {
         <div className="App-header">
         <Routes>
 
-          <Route exact path='/Home' element={<HomePage/>}/>
+          <Route exact path='/' element={<HomePage/>}/>
           <Route path='/DeviceManager' element={<DeviceManagerPage/>}/>
           <Route path='/Settings' element={<SettingsPage/>}/>
         </Routes>

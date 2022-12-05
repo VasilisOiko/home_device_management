@@ -61,7 +61,7 @@ class DeviceManager extends Component {
               cards =
               (
                   deviceGroup.device.map((device, key) =>(
-                    <Card>
+                    <Card key={key}>
                     <Card.Header>{device.name}</Card.Header>
                     <Card.Body>
                       <Card.Title>{device.type}</Card.Title>

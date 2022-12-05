@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "docker build containers",
+            "label": "build docker containers",
             "type": "shell",
             "command": "docker-compose up -d",
             "options": {
@@ -12,7 +12,7 @@
             }
         },
         {
-            "label": "docker build images",
+            "label": "build docker images",
             "type": "shell",
             "command": "docker-compose up --build -d",
             "options": {
@@ -20,14 +20,9 @@
             }
         },
         {
-            "label": "docker frontend terminal",
+            "label": "frontend docker terminal",
             "type": "shell",
             "command": "docker exec -it frontend bash"
-        },
-        {
-            "label": "docker react terminal",
-            "type": "shell",
-            "command": "docker exec -it frontend_react bash"
         }
     ]
 }
