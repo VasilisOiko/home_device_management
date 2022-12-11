@@ -1,93 +1,98 @@
 import React, {Component} from "react";
-
 import Stack from 'react-bootstrap/Stack';
-import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Accordion from 'react-bootstrap/Accordion';
+
+
+/* My components */
+import DeviceForm from './DeviceManager/DeviceForm'
+import DeviceRemoveWarning from './DeviceManager/DeviceRemoveWarning'
 
 /* my data */
-import scenesData from '../data/scenes.json'
 import devicesData from '../data/devices.json'
 
 class DeviceManager extends Component {
 
   constructor()
   {
-      super()
+    super()
+    
+    this.state = {
 
-      this.state = {
-        sceneID: scenesData[0].id,
-        sceneName: scenesData[0].name
-      }
-    this.sceneSelector = this.sceneSelector.bind(this)
-  }
-
-  sceneSelector(eventKey)
-  {
-    let id, name
-
-    id = parseInt(eventKey)
-
-    for(let scene of scenesData) 
-    {
-      if (scene.id === id)
-      {
-        name = scene.name
-        break
-      }
+      deviceInfo:{
+        sceneId: 0,
+        deviceId: 0,
+        deviceName: String,
+        deviceType: String
+      },
+      
+      showForm: false,
+      showRemovalWarning: false
     }
+    
+    // this.sceneSelector = this.sceneSelector.bind(this)
+    
+    this.ShowForm = this.ShowForm.bind(this)
+    this.HideForm = this.HideForm.bind(this)
 
-    this.setState(
-      {
-        sceneID: id,
-        sceneName: name
-      }
-    )
+    this.ShowRemoveWarning = this.ShowRemoveWarning.bind(this)
+    this.HideRemoveWarning = this.HideRemoveWarning.bind(this)
   }
-
-
-/* List devices based the id */
-  getDevices(id)
+  
+  /* List devices based the id */
+  SceneDevices(sceneId)
   {
       let cards
       devicesData.forEach(deviceGroup => {
+        
+        if (deviceGroup.id === sceneId)
+        {
           
-          // console.log(deviceGroup.id, id)
-          
-          if (deviceGroup.id === id)
-          {
-              // console.log(deviceGroup)
-              
-              cards =
-              (
-                  deviceGroup.device.map((device, key) =>(
-                    <Card key={key}>
-                    <Card.Header>{device.name}</Card.Header>
-                    <Card.Body>
-                      <Card.Title>{device.type}</Card.Title>
-                      <Button variant="outline-primary">Edit</Button>
-                      <Button variant="danger">Remove</Button>
-                    </Card.Body>
-                    </Card>
-                  ))
-              )
-          }
+          cards =
+          (
+            deviceGroup.device.map((device, key) =>
+            (
+              <Card key={key}>
+              <Card.Header as={"h4"}>{device.name}</Card.Header>
+              <Card.Body>
+                <Card.Title>{device.type}</Card.Title>
+
+                <Button
+                variant="outline-primary"
+                className="col-sm-2 me-5"
+                onClick={() => this.ShowForm(sceneId, device.id, device.name, device.type)}>
+                  Edit
+                </Button>
+
+                <Button
+                variant="danger"
+                className="col-sm-2"
+                onClick={() => this.ShowRemoveWarning(sceneId, device.id, device.name)}>
+                  Remove
+                </Button>
+
+              </Card.Body>
+              </Card>
+            ))
+          )
+                  
+        }
       });
   
-      return cards
+    return cards
   }
 
   /* List the scnenes and the devices */
-  DevicesList() {
+  DevicesList()
+  {
     return (
       <Accordion flush>
         {
-          scenesData.map((scene, key) => (
-            <Accordion.Item key={key} eventKey = {scene.id}>
-            <Accordion.Header>{scene.name}</Accordion.Header>
-            <Accordion.Body>
-              {this.getDevices(scene.id)}
-              </Accordion.Body>
+          devicesData.map((devices, key) => (
+            <Accordion.Item key={key} eventKey = {devices.id}>
+              <Accordion.Header>{devices.scene}</Accordion.Header>
+              <Accordion.Body>{this.SceneDevices(devices.id)}</Accordion.Body>
             </Accordion.Item>
           )
           )
@@ -95,22 +100,123 @@ class DeviceManager extends Component {
       </Accordion>
     );
   }
-
-
-
-
-
-
-
-
-  render() {
+  
+  
+  AddDeviceButton()
+  {
     return (
-      <Stack gap={3}>
+        <Button
+          className="col-md-2 mx-auto"
+          as="input"
+          type="button"
+          value="add device"
+          onClick={() => this.ShowForm()}/>
+    );
+  }
+
+  /* Remove warning triggers */
+  ShowRemoveWarning(selectedSceneId = 0, selectedDeviceId = 0, selectedDeviceName = "")
+  {
+    this.setState(
+      {
+        showRemovalWarning: true,
+
+        deviceInfo:
+        {
+          sceneId: selectedSceneId,
+          deviceId: selectedDeviceId,
+          deviceName: selectedDeviceName
+
+        }
+      }
+    )
+  }
+
+  HideRemoveWarning()
+  {
+    this.setState(
+      {
+        showRemovalWarning: false,
+      }
+    )
+  }
+
+  /* Form triggers */
+  
+  ShowForm(selectedSceneId = 0, selectedDeviceId = 0, selectedDeviceName = "", selectedDeviceType = "Light")
+  {
+    this.setState(
+      {
+        showForm: true,
+
+        deviceInfo:
+        {
+          sceneId: selectedSceneId,
+          deviceId: selectedDeviceId,
+          deviceName: selectedDeviceName,
+          deviceType: selectedDeviceType
+        }  
+      }
+      );
+    }
+
+  HideForm()
+  {
+    this.setState(
+    {
+      showForm: false
+    });
+  } 
+  
+  /* TODO: ADD THE REMOVE WARNING COMPONENT AN PASS THE CORRECT VALUES */
+  render() {
+    
+    return (
+      <Stack gap={4} className="col-md-8 mx-auto">
         Device Manager
-        {this.DevicesList()}
+        {console.log("manager sent", this.state.deviceInfo)}
+          <DeviceForm
+          showForm = {this.state.showForm}
+          device = {this.state.deviceInfo}
+          onClose = {this.HideForm}/>
+
+          <DeviceRemoveWarning
+          showWarning = {this.state.showRemovalWarning}
+          device = {this.state.deviceInfo}
+          onClose = {this.HideRemoveWarning}/>
+
+          {this.AddDeviceButton()}
+          {this.DevicesList()}
+          
+          
       </Stack>
     )
   }
+
+
+
+   // sceneSelector(eventKey)
+  // {
+    //   let id, name
+    
+    //   id = parseInt(eventKey)
+    
+    //   for(let devices of devicesData) 
+  //   {
+  //     if (devices.id === id)
+  //     {
+    //       name = devices.scene
+    //       break
+    //     }
+    //   }
+
+    //   this.setState(
+      //     {
+  //       sceneID: id,
+  //       sceneName: name
+  //     }
+  //   )
+  // }
 }
 
 export default DeviceManager

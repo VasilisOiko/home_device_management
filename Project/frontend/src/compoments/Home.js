@@ -2,13 +2,15 @@ import React, {Component} from "react";
 import Stack from 'react-bootstrap/Stack';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Dropdown from 'react-bootstrap/Dropdown';
+import {CustomMenu} from './Home/SpacesDropdown'
+import Badge from 'react-bootstrap/Badge';
 
 /* my components */
-import Scenes from './Home/Scenes'
 import Devices from './Home/Devices'
 
 /* my data */
-import scenesData from '../data/scenes.json'
+import devices from '../data/devices.json'
 
 
 class Home extends Component{
@@ -18,12 +20,41 @@ class Home extends Component{
     super()
 
     this.state = {
-      sceneID: scenesData[0].id,
-      sceneName: scenesData[0].name
+      sceneId: devices[0].id,
+      sceneName: devices[0].scene
     }
     
     this.sceneSelector = this.sceneSelector.bind(this)
   }
+
+  /* Create the dropdown menu */
+  SceneList() {
+
+    const getScenes =       /* list all the names */
+    (
+      devices.map((scenes, key) =>(
+        <Dropdown.Item
+        key={key}
+        eventKey={scenes.id}
+        active = {scenes.id === this.state.sceneId? true : false}   /* make the scene active */
+        >
+          {scenes.scene}
+        </Dropdown.Item>
+        )
+      )
+    )
+
+   return (
+      <Dropdown onSelect={this.sceneSelector}>
+        <Dropdown.Toggle id="dropdown-custom-components">
+          Scenes
+        </Dropdown.Toggle>
+        <Dropdown.Menu as={CustomMenu}>
+          {getScenes}
+        </Dropdown.Menu>
+      </Dropdown>
+    )
+}
 
   
   sceneSelector(eventKey)
@@ -32,18 +63,18 @@ class Home extends Component{
 
     id = parseInt(eventKey)
 
-    for(let scene of scenesData) 
+    for(let scenes of devices) 
     {
-      if (scene.id === id)
+      if (scenes.id === id)
       {
-        name = scene.name
+        name = scenes.scene
         break
       }
     }
 
     this.setState(
       {
-        sceneID: id,
+        sceneId: id,
         sceneName: name
       }
     )
@@ -54,10 +85,15 @@ class Home extends Component{
       // console.log(this.state)
       return ( 
         <Stack gap={3}>
-          <Scenes scene={this.state} sceneSelect={this.sceneSelector}/>
+          {this.SceneList()}
+          <h2>
+            <Badge bg="light" text="dark">
+              {this.state.sceneName}
+            </Badge>
+          </h2>
           <Row>
             <Col>
-              <Devices id={this.state.sceneID}/>
+              <Devices id={this.state.sceneId}/>
             </Col>
           </Row>
         </Stack>

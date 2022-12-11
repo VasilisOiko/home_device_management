@@ -1,40 +1,49 @@
 [
     {
         "id": 1,
+        "scene": "Living Room",
         "device":
         [
             {
+                "id": 1,
                 "type": "Light",
                 "name": "Main light"
             },
             {
-                "type": "Smart TV",
+                "id": 2,
+                "type": "TV",
                 "name": "TV"
             },
             {
-                "type": "Smart plug",
+                "id": 3,
+                "type": "Plug",
                 "name": "Heater"
             }
         ]
     },
     {
         "id": 2,
+        "scene": "Bedroom",
         "device":
         [
             {
+                "id": 4,
                 "type": "Light",
                 "name": "Left bed light"
             },
             {
+                "id": 5,
                 "type": "Light",
                 "name": "Right bed light"
             },
             {
+                "id": 6,
                 "type": "Light",
                 "name": "Main light"
             },
             {
-                "type": "Smart TV",
+                "id": 7,
+                "type": "TV",
                 "name": "Bedroom TV"
             }
         ]
@@ -42,18 +51,22 @@
     },
     {
         "id": 3,
+        "scene": "Kitchen",
         "device":
         [
             {
+                "id": 8,
                 "type": "Light",
                 "name": "Main light"
             },
             {
-                "type": "Smart plug",
+                "id": 9,
+                "type": "Plug",
                 "name": "Refrigerator"
             },
             {
-                "type": "Smart plug",
+                "id": 10,
+                "type": "Plug",
                 "name": "Electric stove"
             }
         ]
