@@ -192,31 +192,6 @@ class DeviceManager extends Component {
       </Stack>
     )
   }
-
-
-
-   // sceneSelector(eventKey)
-  // {
-    //   let id, name
-    
-    //   id = parseInt(eventKey)
-    
-    //   for(let devices of devicesData) 
-  //   {
-  //     if (devices.id === id)
-  //     {
-    //       name = devices.scene
-    //       break
-    //     }
-    //   }
-
-    //   this.setState(
-      //     {
-  //       sceneID: id,
-  //       sceneName: name
-  //     }
-  //   )
-  // }
 }
 
 export default DeviceManager
