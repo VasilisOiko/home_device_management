@@ -2,10 +2,12 @@ import React from 'react'
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Switch from '@mui/material/Switch'
+
 
 import devicesData from '../../data/devices.json'
 
-function getDevices(id)
+function getDevices(id, panelStatus, controlPanel)
 {
     let cards
     devicesData.forEach(deviceGroup => {
@@ -24,11 +26,17 @@ function getDevices(id)
                             bg={'light'}
                             text={'dark'}
                         >
-                            <Card.Header as="h5">{device.name}</Card.Header>
+                            <Card.Header
+							as="button"
+							onClick={() => controlPanel(device.id, device.name)}
+							aria-controls={device.id}
+        					aria-expanded={panelStatus}>
+								{device.name}
+							</Card.Header>
                             <Card.Body>
                                 <Card.Title>{device.type}</Card.Title>
                                 <Card.Text>
-                                    device readings
+                                    off <Switch/> on <br/>
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -43,13 +51,11 @@ function getDevices(id)
 
 function Devices(props)
 {
-    const devices = getDevices(props.id)
+    const devices = getDevices(props.id, props.panelStatus, props.controlPanel)
 
     return (
         <Row xs={1} md={2} className="g-4">
-
             {devices}
-
         </Row>
         )
 }

@@ -7,6 +7,7 @@ function DeviceTypeSelect(props) {
     <Form.Group as={Col} controlId="formDeviceType">
     <Form.Label>Device type</Form.Label>
     <Form.Select
+    name="type"
     value={props.type}
     onChange={props.UpdateType}>
 

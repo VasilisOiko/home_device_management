@@ -23,6 +23,7 @@ function DeviceSceneSelect(props) {
     <Form.Group as={Col} controlId="formSceneName">
         <Form.Label>Scene</Form.Label>
         <Form.Select
+        name="sceneId"
         value={props.id}
         onChange={props.UpdateId}>
 

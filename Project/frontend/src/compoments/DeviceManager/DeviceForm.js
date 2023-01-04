@@ -1,9 +1,8 @@
-import React, {Component} from 'react'
+import React, {useState} from 'react'
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-
 
 /* My components */
 import DeviceNameInput from './DeviceForm/DeviceNameInput';
@@ -11,220 +10,174 @@ import DeviceTypeSelect from './DeviceForm/DeviceTypeSelect'
 import DeviceSceneSelect from './DeviceForm/DeviceSceneSelect';
 import SceneNameInput from './DeviceForm/SceneNameInput';
 
-/* My Data */
-import DeviceData from '../../data/devices.json'
 
-class DeviceForm extends Component
+function InitState(setDevice, setSceneInput, props)
 {
-  constructor(props)
+  if(props.device.sceneId === 0)
   {
-    super(props)
-  
-    this.state = {
-      sceneInput: true,
-      validated: false,
-
-      deviceId: 0,
-      deviceName: "",
-      deviceType: "",
-      sceneId: 0,
+    setSceneInput(false)
+  }
+  setDevice(
+    {
+      id: props.device.deviceId,
+      name: props.device.deviceName,
+      type: props.device.deviceType,
+      sceneId: props.device.sceneId,
       sceneName: ""
     }
+  )
+}
 
-    this.InitState = this.InitState.bind(this)
+function HandleSubmit(event, setValidated, device)
+{
+  const form = event.currentTarget;
 
-    this.UpdateDeviceName = this.UpdateDeviceName.bind(this)
-    this.UpdateDeviceType = this.UpdateDeviceType.bind(this)
-    this.UpdateSceneId = this.UpdateSceneId.bind(this)
-    this.UpdateSceneName = this.UpdateSceneName.bind(this)
-
-    this.HandleSubmit = this.HandleSubmit.bind(this)
-  }
-
-  InitState()
+  if (form.checkValidity() === false)
   {
-    let TextInput = true
-    if(this.props.device.sceneId === 0)
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  else
+  {
+    console.log("submit", device.sceneId)
+    if(device.sceneId === 0)
     {
-      TextInput = false
+      alert("Add new scene:" + 
+      "\nScene name: " + device.sceneName)
     }
+    
+    if(device.id === 0)
+    {
+      alert("Add new device(id: " + device.id + 
+      ")\nName: " + device.name +
+      "\nType: " + device.type +
+      "\nScene id: " + device.sceneId)
 
-    this.setState(
-      {
-        deviceId: this.props.device.deviceId,
-        sceneInput: TextInput,
-        
-        deviceName: this.props.device.deviceName,
-        deviceType: this.props.device.deviceType,
-        sceneId: this.props.device.sceneId
-      }
-    )
-  }
-
-  SceneListSelection(){
-    return(
-      <>
-        {DeviceData.map((scenes, key) =>
-          <option key={key} value={scenes.id}>{scenes.scene}</option>
-        )}
-        <option value={0}>Add new scene</option>
-      </>
-    ) 
+      
+    }
+    else
+    {
+      alert("Edit device with ID:" + device.id +
+      "\nName: " + device.name +
+      "\nType: " + device.type +
+      "\nScene id: " + device.sceneId)
+    }
+    
   }
 
-  UpdateDeviceName(event)
-  {
-    this.setState(
-      {
-        deviceName: event.target.value
-      }
-    )
+  setValidated(true)
+}
+
+
+function DeviceFormBody(device, setDevice, sceneInput, setSceneInput)
+{
+  const [validated, setValidated] = useState(false)
+
+  const Submit = (e) => {HandleSubmit(e, setValidated, device)}
+
+  const UpdateDevice = (e) => {
+    setDevice(prevState => (
+    {
+      ...prevState,
+      [e.target.name]: e.target.value
+
+    }))
+    e.preventDefault()
   }
-  UpdateDeviceType(event)
-  {
-    this.setState(
-      {      
-        deviceType: event.target.value
-      }
-    )
-  }
-  UpdateSceneId(event)
-  {
-    let selection = parseInt(event.target.value)
+
+  const UpdateSceneId = (e) => {
+
+    let selection = parseInt(e.target.value)
     let TextInput = true
 
     if(selection === 0)
     {
       TextInput = false
     }
-
-    this.setState(
-      {
-        sceneId: selection,
-        sceneInput: TextInput
-      }
-    )
-  }
-  UpdateSceneName(event)
-  {
-    this.setState(
-      {
-        sceneName: event.target.value
-      }
-    )
-  }
-
-  HandleSubmit(event)
-  {
-    console.log("Handle submit", this.state.sceneId, this.state.sceneName)
-    const form = event.currentTarget;
-
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    else
+    setSceneInput(TextInput)
+    setDevice(prevState => (
     {
-      if(this.state.sceneId === 0)
-      {
-        alert("Add new scene:" + 
-        "\nScene name: " + this.state.sceneName)
-      }
-      
-      if(this.state.deviceId === 0)
-      {
-        alert("Add new device(id: " + this.state.deviceId + 
-        ")\nName: " + this.state.deviceName +
-        "\nType: " + this.state.deviceType +
-        "\nScene id: " + this.state.sceneId)
+      ...prevState,
+      [e.target.name]: selection
 
+    }
+    ))
+    e.preventDefault()
+  }
+
+  return (
+    <Form noValidate validated={validated} onSubmit={Submit}>
+      <Row className="mb-3">
         
-      }
-      else
-      {
-        alert("Edit device with ID:" + this.state.deviceId +
-        "\nName: " + this.state.deviceName +
-        "\nType: " + this.state.deviceType +
-        "\nScene id: " + this.state.sceneId)
-      }
-      
-    }
+        <DeviceNameInput
+        name = {device.name}
+        UpdateName = {UpdateDevice}/>
 
-    this.setState(
-      {
-        validated: true,
-      }
-    )
-  }
+        <DeviceTypeSelect
+        type = {device.type}
+        UpdateType ={UpdateDevice}/>
 
-  DeviceFormBody()
-  {
-    // console.log("device form body", this.state)
-    return (
-      <Form noValidate validated={this.state.validated} onSubmit={this.HandleSubmit}>
-        <Row className="mb-3">
-          
-          <DeviceNameInput
-          name = {this.state.deviceName}
-          UpdateName = {this.UpdateDeviceName}/>
+      </Row>
 
-          <DeviceTypeSelect
-          type = {this.state.deviceType}
-          UpdateType ={this.UpdateDeviceType}/>
+      <Row className="col-md-6 mb-3">
+        
+        <DeviceSceneSelect
+        id = {device.sceneId}
+        UpdateId = {UpdateSceneId}/>
 
-        </Row>
+        <SceneNameInput
+        disableInput = {sceneInput}
+        name = {device.sceneName}
+        UpdateName = {UpdateDevice}/>
 
-        <Row className="col-md-6 mb-3">
-          
-          <DeviceSceneSelect
-          id = {this.state.sceneId}
-          UpdateId = {this.UpdateSceneId}/>
+      </Row>
 
-          <SceneNameInput
-          disableInput = {this.state.sceneInput}
-          name = {this.state.sceneName}
-          UpdateName = {this.UpdateSceneName}/>
-
-        </Row>
-
-        <Button
-        variant="primary"
-        type="submit">
-          Submit
-        </Button>
-      </Form>
-    );
-  }
-
-  render()
-  {
-    let title = "Add Device"
-
-    if(this.props.device.sceneId !== 0)
-    {
-      title = "Edit \"" + this.props.device.deviceName + "\" Device"
-    }
-    return(
-
-      <Offcanvas
-      placement={'top'}
-      className={"h-50"}
-      keyboard={true}
-      show={this.props.showForm}
-      onHide={this.props.onClose}
-      onEnter={this.InitState}>
-
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{title}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          {this.DeviceFormBody()}
-        </Offcanvas.Body>
-
-      </Offcanvas>
-    )
-  }
+      <Button
+      variant="primary"
+      type="submit">
+        Submit
+      </Button>
+    </Form>
+  )
 }
 
+function DeviceForm(props)
+{
+  const [sceneInput, setSceneInput] = useState(true)
+
+  const [device, setDevice] = useState(
+  {
+    id: 0,
+    name: "",
+    type: "",
+    sceneId: 0,
+    sceneName: ""
+  })
+
+  let title = "Add Device"
+
+  if(props.device.sceneId !== 0)
+  {
+    title = "Edit \"" + props.device.deviceName + "\" Device"
+  }
+  return(
+    <Offcanvas
+    placement={'top'}
+    className={"h-50"}
+    keyboard={true}
+    show={props.showForm}
+    onHide={props.onClose}
+    onEnter={() => InitState(setDevice, setSceneInput, props)}>
+
+      <Offcanvas.Header closeButton>
+        <Offcanvas.Title>{title}</Offcanvas.Title>
+      </Offcanvas.Header>
+      <Offcanvas.Body>
+        {DeviceFormBody(device, setDevice, sceneInput, setSceneInput)}
+      </Offcanvas.Body>
+
+    </Offcanvas>
+  )
+}
 
 export default DeviceForm

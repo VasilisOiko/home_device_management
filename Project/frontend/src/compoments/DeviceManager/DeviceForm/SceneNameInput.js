@@ -9,17 +9,18 @@ function SceneNameInput(props) {
         <Form.Label>Scene Name</Form.Label>
         <InputGroup hasValidation>
 
-            <Form.Control
-            required
-            type="text"
-            disabled={props.disableInput}
-            placeholder="Enter scene name"
-            value={props.name}
-            onChange={props.UpdateName}/>
+          <Form.Control
+          required
+          name="sceneName"
+          type="text"
+          disabled={props.disableInput}
+          placeholder="Enter scene name"
+          value={props.name}
+          onChange={props.UpdateName}/>
 
-            <Form.Control.Feedback type="invalid">
-                Please provide a name
-            </Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+              Please provide a name
+          </Form.Control.Feedback>
 
         </InputGroup>
     </Form.Group>

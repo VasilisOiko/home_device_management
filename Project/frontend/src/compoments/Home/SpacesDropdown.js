@@ -2,21 +2,6 @@ import React, { useState } from 'react';
 
 import Form from 'react-bootstrap/Form';
 
-// The forwardRef is important!!
-// Dropdown needs access to the DOM node in order to position the Menu
-export const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  <a
-    href="-"
-    ref={ref}
-    onClick={(e) => {
-      e.preventDefault();
-      onClick(e);
-    }}
-  >
-    {children}
-    &#x25bc;
-  </a>
-));
 
 // forwardRef again here!
 // Dropdown needs access to the DOM of the Menu to measure it

@@ -11,6 +11,7 @@ function DeviceNameInput(props) {
 
             <Form.Control
             required
+            name="name"
             type="text"
             placeholder="Enter device name"
             value={props.name}
