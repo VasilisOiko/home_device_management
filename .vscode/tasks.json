@@ -23,6 +23,11 @@
             "label": "frontend docker terminal",
             "type": "shell",
             "command": "docker exec -it frontend bash"
+        },
+        {
+            "label": "backend docker terminal",
+            "type": "shell",
+            "command": "docker exec -it backend bash"
         }
     ]
 }
