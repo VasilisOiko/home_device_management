@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^0b2p-3@h_&1b*(q8za66$%z=6*puz#a)d18)xfxqpqqkgt$*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["172.18.0.2", "localhost"]
 
 
 # Application definition
@@ -39,17 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    'api.v1.apps.ApiConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'devicemanagerserver.urls'
