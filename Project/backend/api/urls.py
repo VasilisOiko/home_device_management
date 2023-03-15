@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from .views import SpaceList, SpaceDetail, DeviceList, DeviceDetail, MeasurmentList, MeasurmentDetail
 
 urlpatterns = [

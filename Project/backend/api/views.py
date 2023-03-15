@@ -17,7 +17,8 @@ def searchModel(Model, pk):
         return Model.objects.get(pk=pk)
     
     except Model.DoesNotExist:
-        raise Http404
+        raise Http404    
+       
 
 # get model
 def getModel(Model, modelSerializer, pk):
@@ -27,8 +28,17 @@ def getModel(Model, modelSerializer, pk):
     return Response(serializer.data)
 
 # returns model list
-def getModels(Model, modelSerializer):
-    serializer = modelSerializer(Model.objects.all(), many=True)
+def getModels(Model, modelSerializer, request=None, query=None):
+    
+    models = Model.objects.all()
+    
+    if request != None:
+        searchByParam = request.query_params.get(query, None)
+            
+        if searchByParam:
+            models = models.filter(space=searchByParam)
+        
+    serializer = modelSerializer(models, many=True)
     return Response(serializer.data)
 
 
@@ -66,7 +76,9 @@ def deleteModel(Model, pk):
 class SpaceList(APIView):
     
     def get(self, request, format=None):
-        return getModels(Space, SpaceSerializer)
+        spaces = Space.objects.all()
+        serializer =SpaceSerializer(spaces, many=True)
+        return Response(serializer.data)
 
 
     def post(self, request, format=None):
@@ -82,16 +94,26 @@ class SpaceDetail(APIView):
 
     def delete(self, request, pk, format=None):        
         return deleteModel(Space, pk)
-    
 
 # __________________Device__________________
 class DeviceList(APIView):
     
     def get(self, request, format=None):
-        return getModels(Device, DeviceSerializer)
+        devices = Device.objects.all()
+        
+        searchBySpace = self.request.query_params.get('space', None)
+        
+        if searchBySpace:
+            devices = devices.filter(space=searchBySpace)
+        
+        serializer = DeviceSerializer(devices, many=True)
+        
+        return Response(serializer.data)
+        
 
     def post(self, request, format=None):
         return postModel(request, DeviceSerializer)
+    
     
     
 class DeviceDetail(APIView):
@@ -111,7 +133,16 @@ class DeviceDetail(APIView):
 class MeasurmentList(APIView):
     
     def get(self, request, format=None):
-        return getModels(Measurment, MeasurmentSerializer)
+        measurments = Measurment.objects.all()
+    
+        searchByParam = request.query_params.get("device", None)
+                
+        if searchByParam:
+            measurments = measurments.filter(device=searchByParam)
+            
+        serializer = MeasurmentSerializer(measurments, many=True)
+        
+        return Response(serializer.data)
     
     def post(self, request, format=None):
         return postModel(request, MeasurmentSerializer)

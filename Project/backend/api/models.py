@@ -19,7 +19,7 @@ class Device(models.Model):
     
     
 class Measurment(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    timestamp = models.DateTimeField()
     consumption = models.FloatField()
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     valid = models.BooleanField(default=True, editable=False)

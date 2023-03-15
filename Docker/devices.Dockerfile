@@ -12,3 +12,4 @@ RUN pip install --upgrade pip
 RUN pip install pipenv
 
 RUN pip install requests
+RUN pip install paho-mqtt

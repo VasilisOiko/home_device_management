@@ -15,3 +15,5 @@ class MeasurmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Measurment
         fields = '__all__'
+
+

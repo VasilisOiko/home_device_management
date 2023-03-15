@@ -16,4 +16,6 @@ RUN pip install --upgrade pip
 RUN pip install pipenv
 
 RUN pip install Django==4.1.6
+RUN pip install djangorestframework
+RUN pip install paho-mqtt
 
