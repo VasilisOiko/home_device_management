@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^0b2p-3@h_&1b*(q8za66$%z=6*puz#a)d18)xfxqpqqkgt$*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.18.0.4", "localhost"]
+ALLOWED_HOSTS = ["172.18.0.2", "localhost"]
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     
     'api.apps.ApiConfig',
+    'mqtt_client.apps.MqttClientConfig',
 ]
 
 REST_FRAMEWORK = {

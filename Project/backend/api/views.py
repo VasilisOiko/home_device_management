@@ -1,4 +1,7 @@
-from django.http import Http404
+import json
+import time
+import paho.mqtt.client as mqtt
+from django.http import Http404, HttpResponse
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -7,6 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 
+from mqtt_client.mqttClient import Publishment
 from .models import Space, Device, Measurment
 from .serializers import SpaceSerializer, DeviceSerializer, MeasurmentSerializer
 
@@ -43,12 +47,13 @@ def getModels(Model, modelSerializer, request=None, query=None):
 
 
 # post model
-def postModel(request, modelSerializer):
-    serializer = modelSerializer(data=request.data)
+def postModel(data, modelSerializer):
+    serializer = modelSerializer(data=data, many=False)
+
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -82,7 +87,7 @@ class SpaceList(APIView):
 
 
     def post(self, request, format=None):
-        return postModel(request, SpaceSerializer)
+        return postModel(request.data, SpaceSerializer)
 
 class SpaceDetail(APIView):
 
@@ -112,7 +117,7 @@ class DeviceList(APIView):
         
 
     def post(self, request, format=None):
-        return postModel(request, DeviceSerializer)
+        return postModel(request.data, DeviceSerializer)
     
     
     
@@ -120,7 +125,19 @@ class DeviceDetail(APIView):
     
     def get(self, request, pk, format=None):
         return getModel(Device, DeviceSerializer, pk)
+
+    # Post is actually a way to sent a signal to device via MQTT broker
+    def post(self, request, pk, format=None):
         
+        device = searchModel(Device, pk)
+        message = self.request.query_params.get('message', None)
+        
+        if message:
+            mqtt_client = Publishment(device.listeningTopic, message)
+            mqtt_client.publishData()
+            return Response("Sent message: " + message)
+        
+        return Response("Message cannot be sent", status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
         return putModel(Device, DeviceSerializer, request, pk)
@@ -145,7 +162,7 @@ class MeasurmentList(APIView):
         return Response(serializer.data)
     
     def post(self, request, format=None):
-        return postModel(request, MeasurmentSerializer)
+        return postModel(request.data, MeasurmentSerializer)
     
 
 class MeasurmentDetail(APIView):
@@ -159,4 +176,3 @@ class MeasurmentDetail(APIView):
 
     def delete(self, request, pk, format=None):
         return deleteModel(Measurment, pk)
-    

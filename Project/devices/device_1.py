@@ -1,3 +1,4 @@
+import datetime
 import random
 import socket
 import ssl
@@ -15,15 +16,15 @@ BROKER_PORT = 1883
 USERNAME = "root"
 PASSWORD = "toor"
 
-PUBLISH_TOPIC = "sensor_1/power_measurment"
-SUBSCRIBE_TOPIC = "sensor_1/controler"
+PUBLISH_TOPIC = "sensor/energy/consumption"
+SUBSCRIBE_TOPIC = "sensor/TV/controller"
 
 
     
     
 # Create JSON data
 def generate_measurment():
-    device_id = 8
+    device_id = 1
     consumption = random.uniform(120, 150)
     choice = random.choices([1, 2, 3], weights=(80, 15, 5), k=1)
 
@@ -39,9 +40,13 @@ def generate_measurment():
         #  performance mode 
         case 2:
             consumption = random.uniform(120, 150)
+            
+
    
-    consumption = round(consumption, 3)  
-    measurement = { "consumption": consumption , "device": device_id }
+    consumption = round(consumption, 3)
+    measurement = { 'consumption': consumption ,
+                    'device': device_id ,
+                    'timestamp': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")}    # YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]
     
     return json.dumps(measurement)
 

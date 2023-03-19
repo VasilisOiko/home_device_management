@@ -12,6 +12,7 @@ class Device(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     alias = models.TextField(max_length=100)
     connected = models.BooleanField(default=True, editable=False)
+    listeningTopic = models.TextField(max_length=50)
     space = models.ForeignKey(Space, on_delete=models.CASCADE)
     
     def __str__(self):
