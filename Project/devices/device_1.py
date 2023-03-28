@@ -19,16 +19,23 @@ PASSWORD = "toor"
 PUBLISH_TOPIC = "sensor/energy/consumption"
 SUBSCRIBE_TOPIC = "sensor/TV/controller"
 
+DEVICE_ID = 1
 
     
     
 # Create JSON data
 def generate_measurment():
-    device_id = 1
+    global power
     consumption = random.uniform(120, 150)
     choice = random.choices([1, 2, 3], weights=(80, 15, 5), k=1)
-
-    match choice[0]:
+    
+    if power == "OFF":
+        choice = 0
+        
+    match choice:
+        # off
+        case 0:
+            consumption = 0
         # eco mode
         case 1:
             consumption = random.uniform(50, 80)
@@ -38,57 +45,63 @@ def generate_measurment():
             consumption = random.uniform(80, 120)
 
         #  performance mode 
-        case 2:
+        case 3:
             consumption = random.uniform(120, 150)
             
 
-   
     consumption = round(consumption, 3)
     measurement = { 'consumption': consumption ,
-                    'device': device_id ,
-                    'timestamp': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")}    # YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]
+                    'device': DEVICE_ID ,
+                    'timestamp': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    'power': power}    # YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]
     
     return json.dumps(measurement)
 
+
+
+
 # Publish data to the MQTT Broker
 def publish_power_consumption(client):
-    global powerState
-
     # Generate and publish power consumption data every 5 seconds
     while(1):
-        if powerState == "ON":
-            measurment = generate_measurment()
-            print("Publishing: ", measurment)
-            client.publish(PUBLISH_TOPIC, measurment, qos=1, retain=True)
-
+        measurment = generate_measurment()
+        print("Publishing: ", measurment)
+        client.publish(PUBLISH_TOPIC, measurment, qos=1, retain=True)
         time.sleep(1)
+
+
+
+
 
 # Define function to handle incoming control messages
 def on_message(client, userdata, message):
-    global powerState
+    global power
     # Extract the payload from the message
-    payload = message.payload.decode()
-    print(payload)
+    message = json.loads(message.payload.decode())
+    print(message)
+    
+    if "power" in message:
+        # signal the device to be disabled
+        if message["power"] == 'ON':
+            print('Turning device ON')
+            power = "ON"
 
-    # Check if the payload is 'ON' or 'OFF'
-    if payload == 'ON':
-        print('Turning device ON')
-        powerState = "ON"
-
-
-    elif payload == 'OFF':
-        print('Turning device OFF')
-        powerState = "OFF"
-  
+        elif message["power"] == 'OFF':
+            print('Turning device OFF')
+            power = "OFF"
+      
+    
+    
     
 if __name__ == '__main__':
     
-    global powerState
+    global power
+    power = "ON"
     
+        
     # Create MQTT client instance
     client = mqtt.Client()
 
-    powerState = "ON"
     
     
     # Set the on_message callback function

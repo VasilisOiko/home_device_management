@@ -10,6 +10,9 @@ import DeviceManagerPage from './compoments/DeviceManager';
 import SettingsPage from './compoments/Settings';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
+
+
+
 function App() {
   return (
     <div className="App">

@@ -7,6 +7,12 @@ import Col from 'react-bootstrap/esm/Col';
 
 
 function DevicePanel(props) {
+    let url = "ws://192.168.1.4:8000/ws/stream/"
+
+    const streamMeasurment = new WebSocket(url)
+
+    streamMeasurment.onmessage = (e) => console.log("streaming: ", e) 
+
   return (
     <Collapse in={props.show}>
         <div id={props.id}>

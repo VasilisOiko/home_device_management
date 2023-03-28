@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-^0b2p-3@h_&1b*(q8za66$%z=6*puz#a)d18)xfxqpqqkgt$*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.18.0.2", "localhost"]
+ALLOWED_HOSTS = ["172.18.0.2", "0.0.0.0", "localhost", "DeviceManager", "192.168.1.4"]
+
 
 
 # Application definition
@@ -38,9 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # rest framework
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     
+    # channels
+    'channels',
+    
+    # project apps
     'api.apps.ApiConfig',
     'mqtt_client.apps.MqttClientConfig',
 ]
@@ -51,6 +58,15 @@ REST_FRAMEWORK = {
     ]
 }
 
+# CHANNELS_LAYERS = {
+#     'default': {
+#             'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#             'CONFIG': {
+#                 'hosts': [('172.18.0.2', 6379),('192.168.1.4', 6379)],
+#             },
+#     },
+# }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -59,6 +75,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'devicemanagerserver.urls'
@@ -80,6 +99,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'devicemanagerserver.wsgi.application'
+ASGI_APPLICATION = 'devicemanagerserver.asgi.application'
 
 
 # Database
@@ -133,3 +153,29 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS Policy
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ALLOW_HEADERS = (
+#     'accept',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'x-csrftoken',
+#     'x-requested-with',
+# )
+
+
+# CORS_ALLOW_METHODS = [
+#     'DELETE',
+#     'GET',
+#     'OPTIONS',
+#     'PATCH',
+#     'POST',
+#     'PUT',
+# ]

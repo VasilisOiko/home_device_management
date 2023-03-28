@@ -1,7 +1,7 @@
 import json
 import time
 import paho.mqtt.client as mqtt
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -128,16 +128,20 @@ class DeviceDetail(APIView):
 
     # Post is actually a way to sent a signal to device via MQTT broker
     def post(self, request, pk, format=None):
-        
+                       
+        data = request.data
         device = searchModel(Device, pk)
-        message = self.request.query_params.get('message', None)
+ 
+        mqtt_client = Publishment(device.listeningTopic, json.dumps(data))
+        mqtt_client.publishData()
         
-        if message:
-            mqtt_client = Publishment(device.listeningTopic, message)
-            mqtt_client.publishData()
-            return Response("Sent message: " + message)
+        print(device.listeningTopic, json.dumps(data), "\n", device.enabled)
         
-        return Response("Message cannot be sent", status=status.HTTP_400_BAD_REQUEST)
+
+        responseData = {"message": "send"}
+        return Response(data = responseData, status=status.HTTP_202_ACCEPTED)
+        
+        # return Response("Unexpected field", status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
         return putModel(Device, DeviceSerializer, request, pk)
@@ -163,6 +167,10 @@ class MeasurmentList(APIView):
     
     def post(self, request, format=None):
         return postModel(request.data, MeasurmentSerializer)
+    
+    def delete(self, request, format=None):
+        Measurment.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 
 class MeasurmentDetail(APIView):
