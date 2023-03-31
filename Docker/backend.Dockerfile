@@ -19,5 +19,5 @@ RUN pip install Django==4.1.6
 RUN pip install djangorestframework
 RUN pip install paho-mqtt
 RUN pip install django-cors-headers
-RUN pip install channels==3.0.4
+RUN python -m pip install -U channels["daphne"]
 

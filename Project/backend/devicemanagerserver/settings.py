@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,13 +26,17 @@ SECRET_KEY = 'django-insecure-^0b2p-3@h_&1b*(q8za66$%z=6*puz#a)d18)xfxqpqqkgt$*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.18.0.2", "0.0.0.0", "localhost", "DeviceManager", "192.168.1.4"]
+ALLOWED_HOSTS = ["172.18.0.2", "localhost", "DeviceManager", "192.168.1.4"]
 
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # channels
+    'daphne',
+    # 'channels',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,8 +49,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     
-    # channels
-    'channels',
     
     # project apps
     'api.apps.ApiConfig',
@@ -58,14 +61,14 @@ REST_FRAMEWORK = {
     ]
 }
 
-# CHANNELS_LAYERS = {
-#     'default': {
-#             'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#             'CONFIG': {
-#                 'hosts': [('172.18.0.2', 6379),('192.168.1.4', 6379)],
-#             },
-#     },
-# }
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.pubsub.RedisPubSubChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://172.18.0.6:6379"],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,6 +104,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'devicemanagerserver.wsgi.application'
 ASGI_APPLICATION = 'devicemanagerserver.asgi.application'
 
+REDIS_HOST = os.environ.get('REDIS_HOST', '172.18.0.2')
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

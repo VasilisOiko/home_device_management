@@ -7,12 +7,16 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container'
 import Switch from '@mui/material/Switch'
 
-import {fetchData, postData, baseURL} from '../APICalls'
+import {fetchData, postData, baseURL, wsURL} from '../APICalls'
 
 import LoadingAnimation from '../GeneralComponents/LoadingAnimation'
 
+function deviceMessages(event)
+{
+    console.log("streaming: ", event)
+}
 
-function switchDevice(event, device, key, setDevices, onSpace, switches, setSwitches, )
+function switchDevice(event, device, key, onSpace, switches, setSwitches, )
 {
     let isChecked = event.target.checked
     let state = "OFF"
@@ -20,7 +24,7 @@ function switchDevice(event, device, key, setDevices, onSpace, switches, setSwit
     if(isChecked === true)
         state = "ON"
 
-    let message = {"switch": state}
+    let message = {"power": state}
 
 
     const response = postData("/api/devices/" + device.id + "/", message,
@@ -33,15 +37,12 @@ function switchDevice(event, device, key, setDevices, onSpace, switches, setSwit
 
         }
     )
-    fetchData( baseURL + "/api/devices/?space=" + onSpace, setDevices, () => {})
-    
-    
 
     console.log("response: ", switches, "checked: ", isChecked, "key: ", key)
     
 }
 
-function getDevices(devices, setDevices, onSpace, switches, setSwitches, panelStatus, controlPanel)
+function getDevices(devices, onSpace, switches, setSwitches, panelStatus, controlPanel)
 {
     let cards
 
@@ -65,7 +66,7 @@ function getDevices(devices, setDevices, onSpace, switches, setSwitches, panelSt
                         <Card.Text>
                             off <Switch
                             checked={switches[key] || false}
-                            onChange={(event) => {switchDevice(event, device, key, setDevices, onSpace, switches, setSwitches)}}
+                            onChange={(event) => {switchDevice(event, device, key, onSpace, switches, setSwitches)}}
                             /> on <br/>
                         </Card.Text>
                     </Card.Body>
@@ -80,49 +81,51 @@ function getDevices(devices, setDevices, onSpace, switches, setSwitches, panelSt
 function Devices(props)
 {
     /* ___________________Fetch devices___________________ */
-    const [devices, setDevices] = useState()
+    const [deviceChannel, setDeviceChannel] = useState()
     const [switches, setSwitches] = useState()
-    
 
-    
-    useEffect(() => {
-        fetchData( baseURL + "/api/devices/?space=" + props.onSpace, setDevices,
-        (data) => {
 
-        })
-    }, [props.onSpace])
 
     useEffect(() => {
-        if(devices !== undefined)
+        if(props.devices !== undefined)
         {
-            console.log("checking if devices", devices)
-            let switchArray
-            switchArray = new Array(devices.length)
+            let switchArray = new Array(props.devices.length)
+            let channelsArray = new Array(props.devices.length)
+
     
-            console.log(" devices", devices)
-    
-            for (let index=0; index < devices.length; index++)
+            for (let index=0; index < props.devices.length; index++)
             {
-                console.log("inner devices",  devices[index].enabled)
-                switchArray[index] = devices[index].enabled
+                switchArray[index] = props.devices[index].enabled
+                channelsArray[index] = new WebSocket(wsURL + props.devices[index].id + "/")
+
+
+                
+                channelsArray[index].onOpen = () => console.log("connected")
+                channelsArray[index].onClose = () => console.log("disconnected")
+                channelsArray[index].onmessage = deviceMessages
             }
-    
-            console.log("array:", switchArray)
-    
             setSwitches(switchArray)
-    
-            console.log(" aaaa", switchArray)
-
+            setDeviceChannel(channelsArray)
         }
-    }, [devices])
+    }, [props.devices])
+    
     
 
-    if(devices === undefined || switches === undefined)
+
+
+
+
+
+
+
+
+
+    if(props.devices === undefined || switches === undefined)
     {
         return(<LoadingAnimation className='center'/>)
     }
     
-    const deviceCards = getDevices(devices, setDevices, props.onSpace, switches, setSwitches, props.panelStatus, props.controlPanel)
+    const deviceCards = getDevices(props.devices, props.onSpace, switches, setSwitches, props.panelStatus, props.controlPanel)
 
     return (
         

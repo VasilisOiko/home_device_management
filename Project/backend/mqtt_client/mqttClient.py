@@ -3,6 +3,9 @@ from time import sleep
 import paho.mqtt.client as mqtt
 from rest_framework import status
 from rest_framework.response import Response
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.dispatch import receiver
 import atexit
 
 
@@ -36,7 +39,6 @@ class Subscription:
         def on_connect(client, userdata, flags, rc):
             if(rc == 0):
                 print("Connected to MQTT Broker!")
-                print(client, userdata, flags)
             else:
                 print("Failed to connect, return code %d\n", rc)
                 
@@ -68,7 +70,19 @@ class Subscription:
             status = True
         
         self.deviceModel.objects.filter(pk=data["device"]).update(enabled=status)
-
+        
+        
+    # def forwardData(self, message):
+    #     if get_channel_layer() != None:
+    #         print("opening channel: ", get_channel_layer())
+    #         channel_layer = get_channel_layer()
+    #         device_group_name = message["device"]
+            
+    #         print("signal: ", device_group_name, message)
+            
+    #         # measurment = json.loads(message)
+    #         async_to_sync(channel_layer.group_send)(device_group_name, message)
+    #     pass
 
 
     # subscribe to topic, receive data and after update device fields, post them to database
@@ -87,10 +101,13 @@ class Subscription:
                            "device": data["device"],
                            "timestamp": data["timestamp"]}
             
+            # self.forwardData(measurment)
+            
             # call the serializer and pass the data to database
             serializer = self.serializer(data=measurment)
             if serializer.is_valid():
                 serializer.save()
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             
             print("errors: ", serializer.errors)

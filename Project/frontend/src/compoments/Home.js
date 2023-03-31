@@ -45,8 +45,6 @@ function SpaceList(spaces, selectedSpace, setSelectedSpace)
 
   const select = (eventKey) => sceneSelector(spaces, eventKey, setSelectedSpace)
 
-
-
   const getScenes =       /* list all the names */
   (
     spaces.map((space, key) =>(
@@ -79,6 +77,42 @@ function SpaceList(spaces, selectedSpace, setSelectedSpace)
   
 function Home()
 {
+
+
+  const [selectedSpace, setSelectedSpace] = useState({id: 0, name: ""})
+ 
+  const [deviceId, setDeviceId] = useState(1)
+  const [deviceName, setDeviceName] = useState("")
+  const [panel, setPanel] = useState(false)
+
+
+
+   /* ___________________Fetch spaces___________________ */
+   const [spaces, setSpaces] = useState()  // set state for spaces
+   /* fetch data for spaces */
+   useEffect(() => {
+       fetchData(baseURL + '/api/spaces/',                             // url for get method
+       setSpaces,                                                      // set spaces with data
+       (data) => setSelectedSpace({id: data[0].id, name:data[0].name}))  // initialized funciton
+     }, []);
+   
+   
+   
+   /* ___________________Fetch devices___________________ */
+   const [devices, setDevices] = useState()
+   useEffect(() => {
+    fetchData( baseURL + '/api/devices/?space=' + selectedSpace.id, setDevices, ()=>{})
+   }, [selectedSpace])
+
+
+
+
+   /* ___________________Fetch measurments___________________ */
+     // const [measurments, setMeasurments] = useState()
+     // useEffect(() =>fetchData( baseURL + '/api/measurments/', setMeasurments, ()=>{}), [])
+
+  
+  
   const controlPanel = (id, name) =>
   {
     if(panel === false)
@@ -94,35 +128,7 @@ function Home()
     setDeviceName(name)
    }
 
-  const [selectedSpace, setSelectedSpace] = useState({id: 0, name: ""})
-  const [deviceId, setDeviceId] = useState(0)
-  const [deviceName, setDeviceName] = useState("")
-  const [panel, setPanel] = useState(false)
 
-
-
-  /* ___________________Fetch spaces___________________ */
-  const [spaces, setSpaces] = useState()  // set state for spaces
-  /* fetch data for spaces */
-  useEffect(() => {
-      fetchData(baseURL + '/api/spaces/',                             // url for get method
-      setSpaces,                                                      // set spaces with data
-      (data) => setSelectedSpace({id: data[0].id, name:data[0].name}))  // initialized funciton
-    }, []);
-  
-  
-  
-  /* ___________________Fetch devices___________________ */
-  const [devices, setDevices] = useState()
-  useEffect(() => fetchData( baseURL + '/api/devices/', setDevices, ()=>{}), [])
-
-
-/* ___________________Fetch measurments___________________ */
-  const [measurments, setMeasurments] = useState()
-  useEffect(() =>fetchData( baseURL + '/api/measurments/', setMeasurments, ()=>{}), [])
-
-
- 
   if(spaces === undefined )
   {
     console.log("loading...")
@@ -143,14 +149,14 @@ function Home()
           {selectedSpace.name}
         </Badge>
       </h2>
-      <DevicePanel show={panel}
+      {/* <DevicePanel show={panel}
       id={deviceId}
-      name={deviceName}/>
+      name={deviceName}/> */}
       <Row>
         <Col>
           <Devices
-          key={selectedSpace.id}
-          onSpace={selectedSpace.id}
+          key={devices}
+          devices={devices}
           panelStatus={panel}
           controlPanel={controlPanel}/>
         </Col>

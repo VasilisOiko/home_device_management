@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Collapse from 'react-bootstrap/Collapse';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/esm/Row';
@@ -7,7 +7,11 @@ import Col from 'react-bootstrap/esm/Col';
 
 
 function DevicePanel(props) {
-    let url = "ws://192.168.1.4:8000/ws/stream/"
+
+    const [data, setData] = useState()
+
+    let url = "ws://192.168.1.4:8000/livedata/device/" + props.id + "/"
+    console.log("web socker: ", url)
 
     const streamMeasurment = new WebSocket(url)
 

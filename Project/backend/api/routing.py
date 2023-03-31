@@ -1,6 +1,8 @@
-from django.urls import re_path
+from django.urls import path, re_path
+
 from .consumers import DeviceLiveData
 
 websocket_urlpatterns = [
-    re_path('ws/stream/', DeviceLiveData.as_asgi())
+    path("livedata/device/<str:id>/", DeviceLiveData.as_asgi()),
+    re_path(r"^livedata/device/(?P<id>\w+)/$", DeviceLiveData.as_asgi()),
 ]

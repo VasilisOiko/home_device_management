@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+import json
 
 class Space(models.Model):
     name = models.TextField(max_length=100)
@@ -27,4 +28,4 @@ class Measurment(models.Model):
     valid = models.BooleanField(default=True, editable=False)
     
     def __str__(self):
-        return self.device.alias + " measurment @" + str(self.timestamp)
+        return json.dumps({'consumption': self.consumption, 'device': self.device.id, 'timestamp': str(self.timestamp)})

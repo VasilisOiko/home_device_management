@@ -1,4 +1,5 @@
 const baseURL = "http://192.168.1.4:8000"
+const wsURL = "ws://192.168.1.4:8000/livedata/device/"
 
 function fetchData(URL, setData, initialize)
 { 
@@ -16,7 +17,7 @@ function fetchData(URL, setData, initialize)
 
 function postData(URL, jsonData, HandleData, HandleError)
 {
-  fetch(baseURL + URL, {  // Enter your IP address here
+  fetch(baseURL + URL, { 
 
       method: 'POST', 
       headers: {
@@ -37,4 +38,4 @@ function postData(URL, jsonData, HandleData, HandleError)
       });
 }
 
-export {fetchData, postData, baseURL};
+export {fetchData, postData, baseURL, wsURL};
