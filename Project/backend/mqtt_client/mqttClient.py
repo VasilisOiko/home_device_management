@@ -59,49 +59,34 @@ class Subscription:
 
     # update device fields according to received data
     def updateDevice(self, data):
-        # search the device where coming from 
-        # device = self.searchDevice(self.deviceModel, data["device"])
         
-        # if the consumption has negative value, means the device is not enable.
-        # update "enabled" status
+        # search the device where coming from 
+        device = self.deviceModel.objects.filter(pk=data["device"])
+        
+        
         if (data["power"] == "OFF"):
             status = False
         else:
             status = True
         
-        self.deviceModel.objects.filter(pk=data["device"]).update(enabled=status)
         
-        
-    # def forwardData(self, message):
-    #     if get_channel_layer() != None:
-    #         print("opening channel: ", get_channel_layer())
-    #         channel_layer = get_channel_layer()
-    #         device_group_name = message["device"]
-            
-    #         print("signal: ", device_group_name, message)
-            
-    #         # measurment = json.loads(message)
-    #         async_to_sync(channel_layer.group_send)(device_group_name, message)
-    #     pass
+        # update "enabled" status
+        if(device.values("enabled")[0]["enabled"] != status):
+            device.update(enabled=status)
 
 
     # subscribe to topic, receive data and after update device fields, post them to database
     def subscribe(self):
         def on_message(client, userdata, msg):
-            
             # get data from broket
             data = json.loads(msg.payload.decode())
-            
             
             # update device
             self.updateDevice(data)
             
-            
             measurment = {"consumption": data["consumption"],
                            "device": data["device"],
                            "timestamp": data["timestamp"]}
-            
-            # self.forwardData(measurment)
             
             # call the serializer and pass the data to database
             serializer = self.serializer(data=measurment)
@@ -112,6 +97,8 @@ class Subscription:
             
             print("errors: ", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+           
+           
             
         self.client.subscribe(self.TOPIC)
         self.client.on_message = on_message

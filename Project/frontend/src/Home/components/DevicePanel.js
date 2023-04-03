@@ -10,12 +10,6 @@ function DevicePanel(props) {
 
     const [data, setData] = useState()
 
-    let url = "ws://192.168.1.4:8000/livedata/device/" + props.id + "/"
-    console.log("web socker: ", url)
-
-    const streamMeasurment = new WebSocket(url)
-
-    streamMeasurment.onmessage = (e) => console.log("streaming: ", e) 
 
   return (
     <Collapse in={props.show}>

@@ -1,19 +1,24 @@
 import '../../App.css';
 
 import React, {useState, useEffect} from 'react'
+
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Badge from 'react-bootstrap/Badge';
 import Container from 'react-bootstrap/Container'
 import Switch from '@mui/material/Switch'
 
-import {fetchData, postData, baseURL, wsURL} from '../APICalls'
+import {fetchData, postData, baseURL, wsURL} from '../../services/APICalls'
 
-import LoadingAnimation from '../GeneralComponents/LoadingAnimation'
+import LoadingAnimation from '../../components/LoadingAnimation'
 
 function deviceMessages(event)
 {
-    console.log("streaming: ", event)
+    let data = JSON.parse(event.data)
+    console.log("streaming: ", data)
+    
+    console.log("streaming: ", data["message"]["consumption"])
 }
 
 function switchDevice(event, device, key, onSpace, switches, setSwitches, )
@@ -42,7 +47,7 @@ function switchDevice(event, device, key, onSpace, switches, setSwitches, )
     
 }
 
-function getDevices(devices, onSpace, switches, setSwitches, panelStatus, controlPanel)
+function createCards(devices, onSpace, switches, setSwitches, panelStatus, controlPanel, deviceChannels)
 {
     let cards
 
@@ -62,8 +67,10 @@ function getDevices(devices, onSpace, switches, setSwitches, panelStatus, contro
                         {device.alias}
                     </Card.Header>
                     <Card.Body>
-                        <Card.Title>{device.type}</Card.Title>
                         <Card.Text>
+                        <h4>
+                            Consumption <Badge bg="secondary">value</Badge>
+                        </h4>
                             off <Switch
                             checked={switches[key] || false}
                             onChange={(event) => {switchDevice(event, device, key, onSpace, switches, setSwitches)}}
@@ -78,11 +85,11 @@ function getDevices(devices, onSpace, switches, setSwitches, panelStatus, contro
     return cards
 }
 
-function Devices(props)
+function DeviceList(props)
 {
     /* ___________________Fetch devices___________________ */
-    const [deviceChannel, setDeviceChannel] = useState()
     const [switches, setSwitches] = useState()
+    const [deviceChannel, setDeviceChannel] = useState()
 
 
 
@@ -109,13 +116,6 @@ function Devices(props)
         }
     }, [props.devices])
     
-    
-
-
-
-
-
-
 
 
 
@@ -125,14 +125,13 @@ function Devices(props)
         return(<LoadingAnimation className='center'/>)
     }
     
-    const deviceCards = getDevices(props.devices, props.onSpace, switches, setSwitches, props.panelStatus, props.controlPanel)
+    const deviceCards = createCards(props.devices, props.onSpace, switches, setSwitches, props.panelStatus, props.controlPanel, props.deviceChannels)
 
     return (
-        
         <Row xs={1} md={2} className="g-4">
             {deviceCards}
         </Row>
-        )
+    )
 }
 
-export default Devices;
+export default DeviceList;

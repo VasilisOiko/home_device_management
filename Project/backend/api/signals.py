@@ -14,7 +14,7 @@ def sent_device_measurments(sender, instance, created, **kwargs):
     if created :
 
         channel_layer = get_channel_layer()
-        device_group_name = "1"
+        device_group_name = str(instance.device.id)
         
   
         
@@ -25,7 +25,7 @@ def sent_device_measurments(sender, instance, created, **kwargs):
         
         data = {
             "type": "broadcast_measurment",
-            "message": json.dumps(measurment)
+            "message": measurment
         }
         
         async_to_sync(channel_layer.group_send)(device_group_name, data)

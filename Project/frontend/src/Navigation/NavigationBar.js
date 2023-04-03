@@ -14,7 +14,6 @@ function NavigationBar() {
           <Nav className="me-auto">
             <Nav.Link eventKey="1" as={Link} to="/">Home</Nav.Link>
             <Nav.Link eventKey="2" as={Link} to="/DeviceManager">Manage Devices</Nav.Link>
-            <Nav.Link eventKey="3" as={Link} to="/Settings">Settings</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

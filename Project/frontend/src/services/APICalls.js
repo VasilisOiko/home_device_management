@@ -1,4 +1,7 @@
 const baseURL = "http://192.168.1.4:8000"
+const spacesURL = "http://192.168.1.4:8000/api/spaces/"
+const devicesURL = "http://192.168.1.4:8000/api/devices/"
+const measurmentsURL = "http://192.168.1.4:8000/api/measurments/"
 const wsURL = "ws://192.168.1.4:8000/livedata/device/"
 
 function fetchData(URL, setData, initialize)
@@ -38,4 +41,34 @@ function postData(URL, jsonData, HandleData, HandleError)
       });
 }
 
-export {fetchData, postData, baseURL, wsURL};
+function getData(URL)
+{
+  fetch(URL)
+  .then((result) => result.json())
+  .then((data) => {
+      return data
+  })
+  .catch((err) => {
+      console.log(err.message);
+  }) 
+}
+
+function getSpaces()
+{
+  return getData(spacesURL)
+}
+
+function getDevices(fromSpace = "")
+{
+  return getData(devicesURL + fromSpace)
+}
+
+function getMeasurments(fromDevice = "")
+{
+  return getData(measurmentsURL + fromDevice)
+}
+
+export {
+  baseURL, spacesURL, devicesURL, measurmentsURL, wsURL,
+  fetchData, postData, getData, getSpaces, getDevices, getMeasurments
+};

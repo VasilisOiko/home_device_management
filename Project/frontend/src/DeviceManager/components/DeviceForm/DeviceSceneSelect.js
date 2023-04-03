@@ -3,20 +3,19 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 
 /* My Data */
-import DeviceData from "../../../data/devices.json";
 
-function SceneListSelection()
-{
-    return(
+// function SceneListSelection()
+// {
+//     return(
 
-        <>
-            {DeviceData.map((scenes, key) =>
-                <option key={key} value={scenes.id}>{scenes.scene}</option>
-            )}
-            <option value={0}>Add new scene</option>
-        </>
-    )
-}
+//         <>
+//             {DeviceData.map((scenes, key) =>
+//                 <option key={key} value={scenes.id}>{scenes.scene}</option>
+//             )}
+//             <option value={0}>Add new scene</option>
+//         </>
+//     )
+// }
 
 function DeviceSceneSelect(props) {
   return (
@@ -26,8 +25,8 @@ function DeviceSceneSelect(props) {
         name="sceneId"
         value={props.id}
         onChange={props.UpdateId}>
-
-            {SceneListSelection()}
+{/* 
+            {SceneListSelection()} */}
         
         </Form.Select>
     </Form.Group>
