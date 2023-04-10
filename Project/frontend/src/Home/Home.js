@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import axios from "axios"
 import Stack from 'react-bootstrap/Stack';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -6,7 +7,7 @@ import Badge from 'react-bootstrap/Badge';
 
 
 /* my components */
-import {fetchData, baseURL, wsURL} from '../services/APICalls'
+import {fetchData, getSpaces, getDevices, getDeviceSocket, devicesURL, baseURL, spacesURL, wsURL} from '../services/APICalls'
 import LoadingAnimation from '../components/LoadingAnimation'
 import SpaceSelection from './components/SpaceSelection.js'
 import Devices from './components/DeviceList'
@@ -81,49 +82,139 @@ function Home()
   // const [panel, setPanel] = useState(false)
 
 
-
-   /* ___________________Fetch spaces___________________ */
-   const [spaces, setSpaces] = useState()  // set state for spaces
-   /* fetch data for spaces */
-   useEffect(() => {
-       fetchData(baseURL + '/api/spaces/',                             // url for get method
-       setSpaces,                                                      // set spaces with data
-       (data) => setSelectedSpace({id: data[0].id, name:data[0].name}))  // initialized funciton
-     }, []);
-   
-   
-   
-   /* ___________________Fetch devices___________________ */
-   const [devices, setDevices] = useState()
-   useEffect(() => {
-    fetchData( baseURL + '/api/devices/?space=' + selectedSpace.id, setDevices, ()=>{})
-   }, [selectedSpace])
+  const [spaces, setSpaces] = useState()  // set state for spaces
+  const [devices, setDevices] = useState()
 
 
-   
-   
-   
-  const [deviceChannels, setDeviceChannels] = useState()
+  const [socketData, setSocketData] = useState([])
+  let channelsArray
 
+  /* ___________________Fetch spaces___________________ */
   useEffect(() => {
-      if(devices !== undefined)
+  getSpaces()
+  .then( (result) =>
+    {
+      setSpaces(result.data)
+    })
+  }, [])
+   
+
+  /* ___________________set default space___________________ */
+  useEffect( () => 
+  {
+    if(spaces !== undefined)
+    {
+      setSelectedSpace({id: spaces[0].id, name: spaces[0].name})
+
+      getDevices()
+      .then( (result) => 
       {
-        let channelsArray = new Array(devices.length)
+        let devices = result.data;
+
+        channelsArray = new Array(devices.length)
 
         for (let index=0; index < devices.length; index++)
         {
-          channelsArray[index] = new WebSocket(wsURL + devices[index].id + "/")
+          channelsArray[devices[index].id] = getDeviceSocket(devices[index].id)
 
-          channelsArray[index].onOpen = () => console.log("connected")
-          channelsArray[index].onClose = () => console.log("disconnected")
-          channelsArray[index].onmessage = (message) => console.log(message)
+          channelsArray[devices[index].id].onmessage = (receive) => {
+      
+            let message = JSON.parse(receive.data)["message"];
+            
+            console.log("[Home.js] message from device: " + devices[index].id +" ", message) 
+            
+            setSocketData((prevSocketData) => {
+              const updatedArray = [...prevSocketData];
+
+              updatedArray[devices[index].id] = message;
+
+              return updatedArray; 
+            })
+          
+          }
+
+
         }
-        setDeviceChannels(channelsArray)
-      }
-  }, [devices])
+      })
+    }
+
+    return () => {
+      socketData.forEach((socket) => {
+        socket.cloase();
+      });
+    };
+    
+
+  }, [spaces])
+
+  
+  /* ___________________Fetch devices___________________ */
+  useEffect(() => {
+  if(selectedSpace.id !== 0)
+  {
+    getDevices("?space=" + selectedSpace.id)
+    .then( (result) => 
+    {
+      setDevices(result.data)
+    })
+
+  }
+
+  }, [selectedSpace])
 
 
+  /* ___________________socket devices___________________ */
+  // let channelsArray
+  // const [deviceSockets, setDeviceSockets] = useState()
 
+  // useEffect(() =>
+  // {
+  //   if(devices !== undefined)
+  //   {
+  //     channelsArray = new Array(devices.length)
+
+  //     for (let index=0; index < devices.length; index++)
+  //     {
+  //       channelsArray[devices[index].id] = getDeviceSocket(devices[index].id)
+
+  //       channelsArray[devices[index].id].onmessage = (receive) => {
+    
+  //         let message = JSON.parse(receive.data)["message"]["consumption"];
+          
+  //         console.log("message from device: " + devices[index].id +" ", message)
+
+  //         let updatedArray;
+
+  //         if(deviceSockets !== undefined)
+  //         {
+  //           updatedArray = [...deviceSockets]
+  //         }
+  //         else
+  //         {
+  //           updatedArray = new Array;
+  //         }
+          
+  //         updatedArray[devices[index].id] = message;
+  //         setDeviceSockets(updatedArray)
+      
+  //       }        
+  //     }
+
+  //     setDeviceSockets(channelsArray)
+  //   }
+
+  //   if(deviceSockets !== undefined)
+  //   {
+  //     return () => {
+  //       deviceSockets.forEach((socket) => {
+  //         socket.close();
+  //       });
+  //     };
+  //   }
+  // }, [devices])
+
+
+  // console.log("channels state", deviceChannels)
   
   
   // const controlPanel = (id, name) =>
@@ -169,9 +260,10 @@ function Home()
       <Row>
         <Col>
           <Devices
-          key={devices}
+          key={selectedSpace.id}
           devices={devices}
-          deviceChannels={deviceChannels}
+          deviceSocket={channelsArray}
+          socketData={socketData}
           // panelStatus={panel}
           // controlPanel={controlPanel}
           />

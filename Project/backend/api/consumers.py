@@ -12,11 +12,6 @@ class DeviceLiveData(AsyncWebsocketConsumer):
         
         self.device_group_name = self.scope["url_route"]["kwargs"]["id"]        
         
-        # Join room group
-        # async_to_sync(self.channel_layer.group_add)(
-        #     self.device_group_name, self.channel_name
-        # )
-        
         
         await self.channel_layer.group_add(self.device_group_name, self.channel_name)
         
@@ -34,9 +29,6 @@ class DeviceLiveData(AsyncWebsocketConsumer):
     async def disconnect(self, code):
         print("disconnected from channel with code: ", code)
         
-        # async_to_sync(self.channel_layer.group_discard)(
-        #     self.device_group_name, self.channel_name
-        # )
         
         await self.channel_layer.group_discard(self.device_group_name, self.channel_name)
         

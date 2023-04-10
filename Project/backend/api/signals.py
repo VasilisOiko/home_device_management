@@ -21,7 +21,9 @@ def sent_device_measurments(sender, instance, created, **kwargs):
         print("signal: ", type(instance))
         
         measurment = {"consumption": instance.consumption,
-                      "device": instance.device.id, "timestamp": str(instance.timestamp)}
+                      "device": instance.device.id,
+                      "timestamp": str(instance.timestamp),
+                      "enabled": instance.device.enabled}
         
         data = {
             "type": "broadcast_measurment",

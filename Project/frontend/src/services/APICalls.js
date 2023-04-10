@@ -1,3 +1,5 @@
+import axios from "axios"
+
 const baseURL = "http://192.168.1.4:8000"
 const spacesURL = "http://192.168.1.4:8000/api/spaces/"
 const devicesURL = "http://192.168.1.4:8000/api/devices/"
@@ -41,34 +43,31 @@ function postData(URL, jsonData, HandleData, HandleError)
       });
 }
 
-function getData(URL)
-{
-  fetch(URL)
-  .then((result) => result.json())
-  .then((data) => {
-      return data
-  })
-  .catch((err) => {
-      console.log(err.message);
-  }) 
-}
-
 function getSpaces()
 {
-  return getData(spacesURL)
+  return axios.get(spacesURL)
 }
 
-function getDevices(fromSpace = "")
+function getDevices(parameter = "")
 {
-  return getData(devicesURL + fromSpace)
+  return axios.get(devicesURL + parameter)
 }
 
-function getMeasurments(fromDevice = "")
+function getDeviceSocket(id)
 {
-  return getData(measurmentsURL + fromDevice)
+  let socket = new WebSocket(wsURL + id + "/")
+
+  socket.onOpen = () => console.log("connected to device: ", id);
+  socket.onClose = () => console.log("disconnected from device: ", id);
+
+  socket.deviceId = id;
+
+  
+
+  return socket
 }
 
 export {
   baseURL, spacesURL, devicesURL, measurmentsURL, wsURL,
-  fetchData, postData, getData, getSpaces, getDevices, getMeasurments
+  fetchData, postData, getSpaces, getDevices, getDeviceSocket,
 };
