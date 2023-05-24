@@ -13,7 +13,13 @@ import {fetchData, postData, baseURL, wsURL} from '../../services/APICalls'
 
 import LoadingAnimation from '../../components/LoadingAnimation'
 
-
+function isDefined(variable, field)
+{
+    if(variable !== undefined && variable[field] !== undefined)
+        return true
+    
+    return false    
+}
 function switchDevice(event, device, key, onSpace, switches, setSwitches)
 {
     let isChecked = event.target.checked
@@ -24,7 +30,7 @@ function switchDevice(event, device, key, onSpace, switches, setSwitches)
 
     let message = {"power": state}
 
-
+    // http post
     // const response = postData("/api/devices/" + device.id + "/", message,
     // (key, isChecked, switches, setSwitches) => {             // if post successed
     //     const array = switches
@@ -34,7 +40,8 @@ function switchDevice(event, device, key, onSpace, switches, setSwitches)
     // () => {// if post failed
     //     }
     // )
-[device.id].send("senting to: " + device.id)
+
+    device.socket.send(JSON.stringify(message))
 
     console.log("response: ", switches, "checked: ", isChecked, "key: ", key)
     
@@ -44,18 +51,8 @@ function createCards(devices, onSpace, switches, setSwitches, panelStatus, contr
 {
     let cards
 
-   const getDeviceValue = (id) => 
-   {
-        console.log("[DeviceList.js] device: ", id, " ", socketData[id])
-        if (socketData === undefined || socketData[id] === undefined)
-        {
-            return "No Data"; 
-        }
-        else
-        {
-            return socketData[id].consumption;
-        }
-   }
+    console.log("[DeviceList.js] current devices: ", devices)
+    // console.log("[DeviceList]: ", socketData)
 
     cards =
     (
@@ -73,10 +70,11 @@ function createCards(devices, onSpace, switches, setSwitches, panelStatus, contr
                     </Card.Header>
                     <Card.Body>
                         <Card.Text>
-                            Consumption <Badge bg="secondary">{socketData[device.id]!== undefined ? socketData[device.id].consumption : "No Data"}</Badge>
+                            Consumption <Badge bg="secondary">{isDefined(socketData[device.id], "consumption") ? socketData[device.id].consumption : "No Data"}</Badge>
                             <br/>
                             off <Switch
-                            checked={socketData[device.id]!== undefined ? socketData[device.id].enabled : false}
+                            disabled = {isDefined(socketData[device.id], "connected") ? !socketData[device.id].connected : false}
+                            checked={isDefined(socketData[device.id], "enabled") ? socketData[device.id].enabled : false}
                             onChange={(event) => {switchDevice(event, device, key, onSpace, switches, setSwitches)}}
                             /> on <br/>
                         </Card.Text>
@@ -100,6 +98,8 @@ function DeviceList(props)
     {
         return(<LoadingAnimation className='center'/>)
     }
+
+    
     const deviceCards = createCards(props.devices, props.onSpace, switches, setSwitches, props.panelStatus, props.controlPanel, props.socketData)
 
     return (

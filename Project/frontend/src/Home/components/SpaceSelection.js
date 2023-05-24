@@ -57,7 +57,6 @@ function sceneSelector(spaces, eventKey, setSelectedSpace)
 function SpaceSelection(props)
 {
 
-  const select = (eventKey) => sceneSelector(props.spaces, eventKey, props.setSelectedSpace)
 
   const getScenes =       /* list all the names */
   (

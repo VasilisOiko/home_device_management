@@ -7,32 +7,11 @@ import Badge from 'react-bootstrap/Badge';
 
 
 /* my components */
-import {fetchData, getSpaces, getDevices, getDeviceSocket, devicesURL, baseURL, spacesURL, wsURL} from '../services/APICalls'
+import {fetchData, getSpaces, getDevices, setDeviceSocket, devicesURL, baseURL, spacesURL, wsURL} from '../services/APICalls'
 import LoadingAnimation from '../components/LoadingAnimation'
 import SpaceSelection from './components/SpaceSelection.js'
 import Devices from './components/DeviceList'
 
-
-
-
-
-// function sceneSelector(spaces, eventKey, setSelectedSpace)
-// {
-//   let id, name
-
-//   id = parseInt(eventKey)
-
-//   for(let space of spaces) 
-//   {
-//     if (space.id === id)
-//     {
-//       name = space.name
-//       break
-//     }
-//   }
-
-//   setSelectedSpace({id: id, name: name})
-// }
 
 
   /* Create the dropdown menu */
@@ -75,19 +54,20 @@ function Home()
 {
 
 
-  const [selectedSpace, setSelectedSpace] = useState({id: 0, name: ""})
- 
+  
   // const [deviceId, setDeviceId] = useState(1)
   // const [deviceName, setDeviceName] = useState("")
   // const [panel, setPanel] = useState(false)
+  
+  
+  const [spaces, setSpaces] = useState();  // set state for spaces
+  const [selectedSpace, setSelectedSpace] = useState({id: 0, name: ""});
+  
+  const [devices, setDevices] = useState([]);
+  const [deviceGroup, setDeviceGroup] = useState();
 
+  const [socketData, setSocketData] = useState([]);
 
-  const [spaces, setSpaces] = useState()  // set state for spaces
-  const [devices, setDevices] = useState()
-
-
-  const [socketData, setSocketData] = useState([])
-  let channelsArray
 
   /* ___________________Fetch spaces___________________ */
   useEffect(() => {
@@ -99,48 +79,53 @@ function Home()
   }, [])
    
 
-  /* ___________________set default space___________________ */
+  /* ___________________set default space / get sockets___________________ */
   useEffect( () => 
   {
     if(spaces !== undefined)
     {
+      
       setSelectedSpace({id: spaces[0].id, name: spaces[0].name})
 
       getDevices()
       .then( (result) => 
       {
-        let devices = result.data;
+        let devicesData = result.data;
 
-        channelsArray = new Array(devices.length)
+        devicesData.forEach(device => {
 
-        for (let index=0; index < devices.length; index++)
-        {
-          channelsArray[devices[index].id] = getDeviceSocket(devices[index].id)
+          device.socket = setDeviceSocket(device.id)
 
-          channelsArray[devices[index].id].onmessage = (receive) => {
+          device.socket.onmessage = (receive) => {
       
             let message = JSON.parse(receive.data)["message"];
             
-            console.log("[Home.js] message from device: " + devices[index].id +" ", message) 
+            // console.log("[Home.js] message from device: " + devices[index].id + " ")
+            console.log("[Home.js] message from device: ", receive) 
             
+            // socket state approach
             setSocketData((prevSocketData) => {
               const updatedArray = [...prevSocketData];
 
-              updatedArray[devices[index].id] = message;
+              updatedArray[device.id] = message;
 
               return updatedArray; 
             })
-          
+
           }
+        });
 
+        setDevices(devicesData)
+        console.log("[Home.js] all devicesData: ", devicesData)
 
-        }
       })
+
+
     }
 
     return () => {
-      socketData.forEach((socket) => {
-        socket.cloase();
+      devices.forEach((device) => {
+        device.socket.close();
       });
     };
     
@@ -150,68 +135,28 @@ function Home()
   
   /* ___________________Fetch devices___________________ */
   useEffect(() => {
-  if(selectedSpace.id !== 0)
+  if(selectedSpace.id !== 0 && devices !== undefined)
   {
-    getDevices("?space=" + selectedSpace.id)
-    .then( (result) => 
-    {
-      setDevices(result.data)
-    })
+    // second approach
+    let group =[];
+
+    devices.forEach(device => {
+      if (device.space === selectedSpace.id) {
+        group[device.id] = device;
+      }
+    });
+
+    setDeviceGroup(group);
+
+    console.log("[Home.js] group devices: ", devices)
+  
 
   }
 
-  }, [selectedSpace])
+  }, [selectedSpace, devices])
 
 
-  /* ___________________socket devices___________________ */
-  // let channelsArray
-  // const [deviceSockets, setDeviceSockets] = useState()
 
-  // useEffect(() =>
-  // {
-  //   if(devices !== undefined)
-  //   {
-  //     channelsArray = new Array(devices.length)
-
-  //     for (let index=0; index < devices.length; index++)
-  //     {
-  //       channelsArray[devices[index].id] = getDeviceSocket(devices[index].id)
-
-  //       channelsArray[devices[index].id].onmessage = (receive) => {
-    
-  //         let message = JSON.parse(receive.data)["message"]["consumption"];
-          
-  //         console.log("message from device: " + devices[index].id +" ", message)
-
-  //         let updatedArray;
-
-  //         if(deviceSockets !== undefined)
-  //         {
-  //           updatedArray = [...deviceSockets]
-  //         }
-  //         else
-  //         {
-  //           updatedArray = new Array;
-  //         }
-          
-  //         updatedArray[devices[index].id] = message;
-  //         setDeviceSockets(updatedArray)
-      
-  //       }        
-  //     }
-
-  //     setDeviceSockets(channelsArray)
-  //   }
-
-  //   if(deviceSockets !== undefined)
-  //   {
-  //     return () => {
-  //       deviceSockets.forEach((socket) => {
-  //         socket.close();
-  //       });
-  //     };
-  //   }
-  // }, [devices])
 
 
   // console.log("channels state", deviceChannels)
@@ -261,8 +206,7 @@ function Home()
         <Col>
           <Devices
           key={selectedSpace.id}
-          devices={devices}
-          deviceSocket={channelsArray}
+          devices={deviceGroup}
           socketData={socketData}
           // panelStatus={panel}
           // controlPanel={controlPanel}

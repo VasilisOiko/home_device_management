@@ -43,6 +43,11 @@ function postData(URL, jsonData, HandleData, HandleError)
       });
 }
 
+function postMessage(device, data)
+{
+  return axios.post(devicesURL + device + "/", data)
+}
+
 function getSpaces()
 {
   return axios.get(spacesURL)
@@ -53,21 +58,18 @@ function getDevices(parameter = "")
   return axios.get(devicesURL + parameter)
 }
 
-function getDeviceSocket(id)
+function setDeviceSocket(id)
 {
   let socket = new WebSocket(wsURL + id + "/")
-
-  socket.onOpen = () => console.log("connected to device: ", id);
+  
+  socket.onopen = () => console.log("connected from device: ", id);
   socket.onClose = () => console.log("disconnected from device: ", id);
 
-  socket.deviceId = id;
-
-  
 
   return socket
 }
 
 export {
   baseURL, spacesURL, devicesURL, measurmentsURL, wsURL,
-  fetchData, postData, getSpaces, getDevices, getDeviceSocket,
+  fetchData, postData, postMessage, getSpaces, getDevices, setDeviceSocket,
 };

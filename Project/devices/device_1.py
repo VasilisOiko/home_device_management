@@ -16,10 +16,11 @@ BROKER_PORT = 1883
 USERNAME = "root"
 PASSWORD = "toor"
 
-PUBLISH_TOPIC = "sensor/energy/consumption"
-SUBSCRIBE_TOPIC = "sensor/TV/controller"
-
 DEVICE_ID = 1
+
+PUBLISH_TOPIC = "sensor/energy/consumption"
+SUBSCRIBE_TOPIC = "sensor/" + str(DEVICE_ID) + "/controller"
+
 
     
     

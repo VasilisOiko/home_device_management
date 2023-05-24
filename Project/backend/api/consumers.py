@@ -1,6 +1,25 @@
+from api.models import Device
+from mqtt_client.mqttClient import Publishment
+
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import async_to_sync
+from channels.db import database_sync_to_async
 import json
+
+
+def forwardMessage(id, data):
+    
+    message = json.loads(data)
+    print("receive data:", message, "info about device: ", id) 
+    
+    device = Device.objects.get(pk=id)
+    print("device", device.listeningTopic)
+
+    mqtt_client = Publishment(device.listeningTopic, json.dumps(message))
+    
+    mqtt_client.publishData()
+    pass
+
+
 
 class DeviceLiveData(AsyncWebsocketConsumer):
     
@@ -19,8 +38,13 @@ class DeviceLiveData(AsyncWebsocketConsumer):
         print("accept connection | channel: ", self.device_group_name, self.channel_name)
         
         
+        
+        message = {"connected": False,
+                      "enabled": False}
+        
+
         await self.send(text_data=json.dumps({
-            'message': "ela re bro"
+            'message': message
         }))
         
 
@@ -35,12 +59,22 @@ class DeviceLiveData(AsyncWebsocketConsumer):
         pass
     
     async def receive(self, text_data=None, bytes_data=None):
-        text_data_json = json.loads(text_data)
-        print("receive data: {text_data_json}")
+        
+        message = json.loads(text_data)
+        print("receive data:", message, "info about device: ", self.device_group_name) 
+        
+        
+        device = await database_sync_to_async(Device.objects.get)(pk=self.device_group_name)
+        print("device", device.listeningTopic)
+
+        mqtt_client = Publishment(device.listeningTopic, json.dumps(message))
+        
+        mqtt_client.publishData()        
+        
         pass
     
     async def broadcast_measurment(self, measurment):
-        print("senting measurment via socket")
+        print("sending measurment via socket")
         await self.send(text_data=json.dumps({
             'message': measurment["message"]
         }))

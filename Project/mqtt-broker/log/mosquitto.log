@@ -1,50 +1,14 @@
-1678794015: mosquitto version 2.0.15 starting
-1678794015: Config loaded from /mosquitto/config/mosquitto.conf.
-1678794015: Starting in local only mode. Connections will only be possible from clients running on this machine.
-1678794015: Create a configuration file which defines a listener to allow remote access.
-1678794015: For more details see https://mosquitto.org/documentation/authentication-methods/
-1678794015: Opening ipv4 listen socket on port 1883.
-1678794015: Opening ipv6 listen socket on port 1883.
-1678794015: Error: Address not available
-1678794015: mosquitto version 2.0.15 running
-1678794158: mosquitto version 2.0.15 terminating
-1678794158: Saving in-memory database to /mosquitto/data//mosquitto.db.
-1678794195: mosquitto version 2.0.15 starting
-1678794195: Config loaded from /mosquitto/config/mosquitto.conf.
-1678794195: Starting in local only mode. Connections will only be possible from clients running on this machine.
-1678794195: Create a configuration file which defines a listener to allow remote access.
-1678794195: For more details see https://mosquitto.org/documentation/authentication-methods/
-1678794195: Opening ipv4 listen socket on port 1883.
-1678794195: Opening ipv6 listen socket on port 1883.
-1678794195: Error: Address not available
-1678794195: mosquitto version 2.0.15 running
-1678794484: New connection from 127.0.0.1:38060 on port 1883.
-1678794484: New client connected from 127.0.0.1:38060 as auto-19473132-D20A-7D59-D639-67FCEBC8008F (p2, c1, k60).
-1678794504: Client auto-19473132-D20A-7D59-D639-67FCEBC8008F disconnected.
-1678794508: New connection from 127.0.0.1:38062 on port 1883.
-1678794508: New client connected from 127.0.0.1:38062 as auto-6A02D1E4-6641-6F6D-083A-DABCF7F7425A (p2, c1, k60).
-1678794520: Client auto-6A02D1E4-6641-6F6D-083A-DABCF7F7425A closed its connection.
-1678794544: New connection from 127.0.0.1:38078 on port 1883.
-1678794544: New client connected from 127.0.0.1:38078 as auto-4DE96825-5EAB-0FC1-00FE-553861E42428 (p2, c1, k60).
-1678794556: Client auto-4DE96825-5EAB-0FC1-00FE-553861E42428 disconnected.
-1678794600: New connection from 127.0.0.1:38080 on port 1883.
-1678794600: New client connected from 127.0.0.1:38080 as auto-C7A4B455-C618-4098-49E7-AB9B63E44D60 (p2, c1, k60).
-1678794604: Client auto-C7A4B455-C618-4098-49E7-AB9B63E44D60 disconnected.
-1678794626: New connection from 127.0.0.1:38082 on port 1883.
-1678794626: New client connected from 127.0.0.1:38082 as auto-46410063-25A5-0BA6-79EA-B214B42C3B9C (p2, c1, k60).
-1678794626: Client auto-46410063-25A5-0BA6-79EA-B214B42C3B9C disconnected.
-1678794630: New connection from 127.0.0.1:38084 on port 1883.
-1678794630: New client connected from 127.0.0.1:38084 as auto-2FC3C181-EDD3-FC75-2FC3-867B98183529 (p2, c1, k60).
-1678794630: Client auto-2FC3C181-EDD3-FC75-2FC3-867B98183529 disconnected.
-1678794674: New connection from 127.0.0.1:38086 on port 1883.
-1678794674: New client connected from 127.0.0.1:38086 as auto-4BB12F17-8029-2C24-6136-2BB071277163 (p2, c1, k60).
-1678794700: New connection from 127.0.0.1:38088 on port 1883.
-1678794700: New client connected from 127.0.0.1:38088 as auto-12A180BC-70A8-0E99-6072-1D37CF4E3096 (p2, c1, k60).
-1678794700: Client auto-12A180BC-70A8-0E99-6072-1D37CF4E3096 disconnected.
-1678794707: New connection from 127.0.0.1:38090 on port 1883.
-1678794707: New client connected from 127.0.0.1:38090 as auto-ECB0CAE8-77E0-C9EA-9351-585D22B8A4A4 (p2, c1, k60).
-1678794707: Client auto-ECB0CAE8-77E0-C9EA-9351-585D22B8A4A4 disconnected.
-1678794708: New connection from 127.0.0.1:38092 on port 1883.
-1678794708: New client connected from 127.0.0.1:38092 as auto-584EBE79-8A86-1930-2100-2A106A639106 (p2, c1, k60).
-1678794708: Client auto-584EBE79-8A86-1930-2100-2A106A639106 disconnected.
-1678794713: Client auto-4BB12F17-8029-2C24-6136-2BB071277163 disconnected.
+1683786320: mosquitto version 2.0.15 starting
+1683786320: Config loaded from /mosquitto/config/mosquitto.conf.
+1683786320: Opening ipv4 listen socket on port 1883.
+1683786320: mosquitto version 2.0.15 running
+1683786726: mosquitto version 2.0.15 terminating
+1683786728: mosquitto version 2.0.15 starting
+1683786728: Config loaded from /mosquitto/config/mosquitto.conf.
+1683786728: Opening ipv4 listen socket on port 1883.
+1683786728: mosquitto version 2.0.15 running
+1683786783: mosquitto version 2.0.15 terminating
+1683786807: mosquitto version 2.0.15 starting
+1683786807: Config loaded from /mosquitto/config/mosquitto.conf.
+1683786807: Opening ipv4 listen socket on port 1883.
+1683786807: mosquitto version 2.0.15 running

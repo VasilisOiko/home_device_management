@@ -18,11 +18,12 @@ def sent_device_measurments(sender, instance, created, **kwargs):
         
   
         
-        print("signal: ", type(instance))
+        # print("signal: ", type(instance))
         
         measurment = {"consumption": instance.consumption,
                       "device": instance.device.id,
                       "timestamp": str(instance.timestamp),
+                      "connected": instance.device.connected,
                       "enabled": instance.device.enabled}
         
         data = {
