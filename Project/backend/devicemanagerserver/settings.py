@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-^0b2p-3@h_&1b*(q8za66$%z=6*puz#a)d18)xfxqpqqkgt$*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.18.0.2", "localhost", "DeviceManager", "192.168.1.4"]
+# ALLOWED_HOSTS = ["172.18.0.2", "localhost", "DeviceManager", "192.168.1.4", "10.144.108.41"]
+ALLOWED_HOSTS = ["*"]
 
 
 
@@ -74,13 +75,15 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+
 ]
 
 ROOT_URLCONF = 'devicemanagerserver.urls'
@@ -162,6 +165,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+
 # CORS_ALLOW_HEADERS = (
 #     'accept',
 #     'accept-encoding',
@@ -175,11 +179,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 # )
 
 
-# CORS_ALLOW_METHODS = [
-#     'DELETE',
-#     'GET',
-#     'OPTIONS',
-#     'PATCH',
-#     'POST',
-#     'PUT',
-# ]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]

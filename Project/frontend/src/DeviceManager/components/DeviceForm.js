@@ -156,9 +156,9 @@ function DeviceForm(props)
 
   let title = "Add Device"
 
-  if(props.device.sceneId !== 0)
+  if(props.space.id !== 0)
   {
-    title = "Edit \"" + props.device.deviceName + "\" Device"
+    title = "Edit \"" + props.device.alias + "\" Device"
   }
   return(
     <Offcanvas

@@ -23,7 +23,7 @@ function App() {
         <Routes>
 
           <Route exact path='/' element={<HomePage/>}/>
-          {/* <Route path='/DeviceManager' element={<DeviceManagerPage/>}/> */}
+          <Route path='/DeviceManager' element={<DeviceManagerPage/>}/>
         </Routes>
         </div>
         
