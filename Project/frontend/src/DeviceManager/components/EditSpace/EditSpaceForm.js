@@ -1,4 +1,4 @@
-import Reactl, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 
 import SpaceForm from '../../../components/SpaceForm'
 import InfoModal from '../../../components/InfoModal';

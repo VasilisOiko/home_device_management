@@ -1,18 +1,11 @@
-import json
-import time
-import paho.mqtt.client as mqtt
-from django.http import Http404, HttpResponse, JsonResponse
-from rest_framework import generics
+from django.http import Http404
 from rest_framework.views import APIView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 
-from mqtt_client.mqttClient import Publishment
-from .models import Space, Device, Measurment
-from .serializers import SpaceSerializer, DeviceSerializer, MeasurmentSerializer
+from .models import Space, Device, Measurement
+from .serializers import NestSpaceSerializer, SpaceSerializer, DeviceSerializer, MeasurementSerializer
 
 # ______________HTTP Methods______________
 # search a model using private key
@@ -29,20 +22,6 @@ def getModel(Model, modelSerializer, pk):
     model = searchModel(Model, pk)
     serializer = modelSerializer(model)
     
-    return Response(serializer.data)
-
-# returns model list
-def getModels(Model, modelSerializer, request=None, query=None):
-    
-    models = Model.objects.all()
-    
-    if request != None:
-        searchByParam = request.query_params.get(query, None)
-            
-        if searchByParam:
-            models = models.filter(space=searchByParam)
-        
-    serializer = modelSerializer(models, many=True)
     return Response(serializer.data)
 
 
@@ -77,12 +56,20 @@ def deleteModel(Model, pk):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# __________________Building(Space-Devices)__________________
+class NestSpaceList(APIView):
+    def get(self, request, format=None):
+        spaces = Space.objects.all()
+        serializer = NestSpaceSerializer(spaces, many=True)
+        return Response(serializer.data)
+
+
 # __________________Space__________________
 class SpaceList(APIView):
     
     def get(self, request, format=None):
         spaces = Space.objects.all()
-        serializer =SpaceSerializer(spaces, many=True)
+        serializer = SpaceSerializer(spaces, many=True)
         return Response(serializer.data)
 
 
@@ -126,23 +113,6 @@ class DeviceDetail(APIView):
     def get(self, request, pk, format=None):
         return getModel(Device, DeviceSerializer, pk)
 
-    # Post is actually a way to sent a signal to device via MQTT broker
-    def post(self, request, pk, format=None):
-                       
-        data = request.data
-        device = searchModel(Device, pk)
- 
-        mqtt_client = Publishment(device.listeningTopic, json.dumps(data))
-        mqtt_client.publishData()
-        
-        print(device.listeningTopic, json.dumps(data), "\n", device.enabled)
-        
-
-        responseData = {"message": "send"}
-        return Response(data = responseData, status=status.HTTP_202_ACCEPTED)
-        
-        # return Response("Unexpected field", status=status.HTTP_400_BAD_REQUEST)
-
     def put(self, request, pk, format=None):
         return putModel(Device, DeviceSerializer, request, pk)
 
@@ -151,36 +121,36 @@ class DeviceDetail(APIView):
         
 
 # __________________Measurment__________________
-class MeasurmentList(APIView):
+class MeasurementList(APIView):
     
     def get(self, request, format=None):
-        measurments = Measurment.objects.all()
+        measurments = Measurement.objects.all()
     
         searchByParam = request.query_params.get("device", None)
                 
         if searchByParam:
             measurments = measurments.filter(device=searchByParam)
             
-        serializer = MeasurmentSerializer(measurments, many=True)
+        serializer = MeasurementSerializer(measurments, many=True)
         
         return Response(serializer.data)
     
     def post(self, request, format=None):
-        return postModel(request.data, MeasurmentSerializer)
+        return postModel(request.data, MeasurementSerializer)
     
     def delete(self, request, format=None):
-        Measurment.objects.all().delete()
+        Measurement.objects.all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 
-class MeasurmentDetail(APIView):
+class MeasurementDetail(APIView):
     
     def get(self, request, pk, format=None):
-        return getModel(Measurment, MeasurmentSerializer, pk)
+        return getModel(Measurement, MeasurementSerializer, pk)
         
 
     def put(self, request, pk, format=None):
-        return putModel(Measurment, MeasurmentSerializer, request, pk)
+        return putModel(Measurement, MeasurementSerializer, request, pk)
 
     def delete(self, request, pk, format=None):
-        return deleteModel(Measurment, pk)
+        return deleteModel(Measurement, pk)

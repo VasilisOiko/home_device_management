@@ -2,10 +2,9 @@ import React, {useState} from 'react'
 
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Badge from 'react-bootstrap/Badge';
 import {RiDeleteBinLine} from 'react-icons/ri'; 
 
-import { deleteSpace, getDevices } from '../../../services/APICalls';
+import {deleteSpace} from '../../../services/APICalls';
 import ModalBodyMessage from './ModalBodyMessage';
 
 

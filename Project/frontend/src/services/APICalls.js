@@ -3,6 +3,7 @@ import axios from "axios"
 
 const serverIP = "192.168.1.4:8000"
 const baseURL = "http://" + serverIP;
+const nestSpacesURL = baseURL + "/api/spaces/all/"
 const spacesURL = baseURL + "/api/spaces/"
 const devicesURL = baseURL + "/api/devices/"
 const measurmentsURL = baseURL + "/api/measurments/"
@@ -11,6 +12,12 @@ const wsURL = "ws://192.168.1.4:8000/livedata/device/"
 
 
 /* Space Methods */
+function getNestSpaces()
+{
+  return axios.get(nestSpacesURL)  
+}
+
+
 function getSpaces()
 {
   return axios.get(spacesURL)
@@ -77,5 +84,5 @@ function setDeviceSocket(id)
 
 export {
   baseURL, spacesURL, devicesURL, measurmentsURL, wsURL,
-  postData, getSpaces, postSpace, putSpace, deleteSpace, getDevices, postMessage, setDeviceSocket,
+  postData, getNestSpaces, getSpaces, postSpace, putSpace, deleteSpace, getDevices, postMessage, setDeviceSocket,
 };

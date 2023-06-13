@@ -38,7 +38,7 @@ const CustomMenu = React.forwardRef(
 
 function sceneSelector(spaces, eventKey, setSelectedSpace)
 {
-  let id, name
+  let id
 
   id = parseInt(eventKey)
 
@@ -46,19 +46,18 @@ function sceneSelector(spaces, eventKey, setSelectedSpace)
   {
     if (space.id === id)
     {
-      name = space.name
+      setSelectedSpace(space)
       break
     }
   }
 
-  setSelectedSpace({id: id, name: name})
 }
 
 function SpaceSelection(props)
 {
 
 
-  const getScenes =       /* list all the names */
+  const getSpaces =       /* list all the names */
   (
     props.spaces.map((space, key) =>(
       <Dropdown.Item
@@ -79,7 +78,7 @@ function SpaceSelection(props)
         Scenes
       </Dropdown.Toggle>
       <Dropdown.Menu as={CustomMenu}>
-        {getScenes}
+        {getSpaces}
       </Dropdown.Menu>
     </Dropdown>
   )

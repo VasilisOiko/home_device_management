@@ -31,8 +31,21 @@ ALLOWED_HOSTS = ["*"]
 
 
 
-# Application definition
+# CORS Policy
+CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+
+
+# Application definition
 INSTALLED_APPS = [
     # channels
     'daphne',
@@ -53,6 +66,7 @@ INSTALLED_APPS = [
     
     # project apps
     'api.apps.ApiConfig',
+    'web_sockets.apps.WebSocketsConfig',
     'mqtt_client.apps.MqttClientConfig',
 ]
 
@@ -104,6 +118,7 @@ TEMPLATES = [
     },
 ]
 
+# channels
 WSGI_APPLICATION = 'devicemanagerserver.wsgi.application'
 ASGI_APPLICATION = 'devicemanagerserver.asgi.application'
 
@@ -161,29 +176,17 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS Policy
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 
-# CORS_ALLOW_HEADERS = (
-#     'accept',
-#     'accept-encoding',
-#     'authorization',
-#     'content-type',
-#     'dnt',
-#     'origin',
-#     'user-agent',
-#     'x-csrftoken',
-#     'x-requested-with',
-# )
 
+# Define MQTT broker address and port
+MQTT_BROKER_ADDRESS = '172.18.0.3'
+MQTT_BROKER_PORT = 1883
 
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
+# Authentication
+MQTT_USERNAME = "root"
+MQTT_PASSWORD = "toor"
+
+# Stantard Topics
+MEASUREMENTS_TOPIC = "sensor/energy/consumption"
+STATUS_TOPIC = "sensor/energy/status"

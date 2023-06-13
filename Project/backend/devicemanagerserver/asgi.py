@@ -13,7 +13,7 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 # from channels.security.websocket import AllowedHostsOriginValidator
-import api.routing
+import web_sockets.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'devicemanagerserver.settings')
 
@@ -22,7 +22,7 @@ application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
         "websocket": AuthMiddlewareStack(
-            URLRouter(api.routing.websocket_urlpatterns)
+            URLRouter(web_sockets.routing.websocket_urlpatterns)
         ),
     },
 )

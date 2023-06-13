@@ -19,7 +19,7 @@ function CreateSpaceButton()
         
         <Button variant="primary" onClick={handleShow} className="me-2">Create Space</Button>
 
-        <Offcanvas show={show} onHide={handleClose} placement={'top'} name={'createSpace'} className={"h-50"}>
+        <Offcanvas show={show} onHide={handleClose} placement={'top'} name={'createSpace'} className={"auto"}>
           
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Create Space</Offcanvas.Title>

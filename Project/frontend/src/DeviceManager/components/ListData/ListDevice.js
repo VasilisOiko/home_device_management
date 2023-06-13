@@ -25,9 +25,13 @@ function ListDevice({spaceId})
 
   return (
     devices === undefined ?
+
     <LoadingAnimation/> :
+
     devices.length === 0 ?
+
     <Alert key={"secondary"} variant={"secondary"}>Empty</Alert> :
+    
     <div>
       {devices.map((device) => <Device key={device.id} device={device}/> )}
     </div>

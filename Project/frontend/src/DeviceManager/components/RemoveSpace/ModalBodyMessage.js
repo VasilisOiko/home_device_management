@@ -14,7 +14,7 @@ function ModalBodyMessage({space})
     useEffect(() => {
         getDevices("?space=" + space.id)
         .then((result)=> {setDevices(result.data);console.log("[ModalBodyMessage]" ,space.id ,result.data);})
-    }, [])
+    }, [space.id])
     
 
     return (

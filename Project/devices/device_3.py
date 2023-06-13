@@ -16,7 +16,7 @@ PASSWORD = "toor"
 
 DEVICE_ID = 2
 
-PUBLISH_TOPIC = "sensor/energy/consumption"
+PUBLISH_MEASURMENT_TOPIC = "sensor/energy/consumption"
 SUBSCRIBE_TOPIC = "sensor/" + str(DEVICE_ID) + "/controller"
 
 
@@ -62,7 +62,7 @@ def publish_power_consumption(client):
     while(1):
         measurment = generate_measurment()
         print("Publishing: ", measurment)
-        client.publish(PUBLISH_TOPIC, measurment, qos=1, retain=True)
+        client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=True)
         time.sleep(4)
 
 

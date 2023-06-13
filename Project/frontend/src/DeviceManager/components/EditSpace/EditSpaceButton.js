@@ -22,7 +22,7 @@ function EditSpaceButton({space})
                 <LuEdit/>
             </Button>
 
-            <Offcanvas show={show} onHide={handleClose} placement={'top'} name={'editSpace'} className={"h-50"}>
+            <Offcanvas show={show} onHide={handleClose} placement={'top'} name={'editSpace'} className={"auto"}>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>Edit {space.name}</Offcanvas.Title>
                 </Offcanvas.Header>
