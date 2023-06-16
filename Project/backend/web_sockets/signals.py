@@ -16,10 +16,7 @@ def sentMeasurment(sender, instance, created, **kwargs):
         # get device channel
         channel_layer = get_channel_layer()
         device_group_name = str(instance.device.id)
-        
-  
-        # print("signal: ", type(instance))
-        
+              
         # make measurement message
         measurment = {"consumption": instance.consumption,
                       "device": instance.device.id,
@@ -39,9 +36,7 @@ def sentMeasurment(sender, instance, created, **kwargs):
 # This signal updates the listening topic of the device to a default topic
 @receiver(post_save, sender=Device)
 def setDeviceTopic(sender, instance, created, **kwargs):
-    
-    print("[signal Device pre_save]: ", instance)        
-    
+        
     # Device topic with default value change to "sensor/[id]/controler"
     if instance.listeningTopic == "default":
         instance.listeningTopic = "sensor/" + str(instance.id) + "/controller"

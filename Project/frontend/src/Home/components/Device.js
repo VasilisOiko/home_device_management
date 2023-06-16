@@ -6,12 +6,30 @@ import Badge from 'react-bootstrap/Badge';
 import Switch from '@mui/material/Switch'
 
 
+
 function isDefined(variable, field)
 {
     if(variable !== undefined && variable[field] !== undefined)
         return true
     
     return false    
+}
+
+function getConsumption(data)
+{
+    if (isDefined(data, "connected") && data.connected === false)
+    {
+        return "No Data";
+    }
+    else if (isDefined(data, "enabled") && data.enabled === false)
+    {
+        return 0;
+    }
+    else if(isDefined(data, "consumption"))
+    {
+        return data.consumption
+    }
+
 }
 
 function switchDevice(event, device)
@@ -47,13 +65,13 @@ function Device({device, socketData}) {
             <Card.Body>
 
                 <Card.Text>
-                    Consumption <Badge bg="secondary">{isDefined(socketData[device.id], "consumption") ? socketData[device.id].consumption : "No Data"}</Badge>
+                    Consumption: <Badge bg="secondary">{getConsumption(socketData[device.id])}</Badge>
                     <br/>
-                    off <Switch
+                    OFF <Switch
                     disabled = {isDefined(socketData[device.id], "connected") ? !socketData[device.id].connected : false}
                     checked={isDefined(socketData[device.id], "enabled") ? socketData[device.id].enabled : false}
                     onChange={(event) => {switchDevice(event, device)}}
-                    /> on <br/>
+                    /> ON <br/>
                 </Card.Text>
 
             </Card.Body>

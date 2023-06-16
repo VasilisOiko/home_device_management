@@ -1,5 +1,5 @@
 from api.models import Device
-from mqtt_client.publishing import Publishment
+from mqtt_client.client import Client
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -11,6 +11,9 @@ class DeviceLiveData(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
         self.device_group_name = None
+        
+        
+        
         
     async def connect(self):
         
@@ -34,6 +37,10 @@ class DeviceLiveData(AsyncWebsocketConsumer):
         }))
         pass
         
+        
+        
+        
+        
     async def disconnect(self, code):
         print("disconnected from channel with code: ", code)
         
@@ -41,9 +48,13 @@ class DeviceLiveData(AsyncWebsocketConsumer):
         
         pass
     
+    
+    
+    
+    
+    
     # recieving data from UI or user
     async def receive(self, text_data=None, bytes_data=None):
-        
         
         message = json.loads(text_data)
         print("receive data:", message, "info about device: ", self.device_group_name) 
@@ -52,12 +63,17 @@ class DeviceLiveData(AsyncWebsocketConsumer):
         device = await database_sync_to_async(Device.objects.get)(pk=self.device_group_name)
         print("device", device.listeningTopic)
 
-        # create a publishment
-        mqtt_client = Publishment(device.listeningTopic, json.dumps(message))
-        
-        mqtt_client.publishData()        
+        # make the publishment  
+        publisher = Client("Server Publisher")
+        publisher.connect_to_broker(repeat=False)
+        publisher.publish(device.listeningTopic, message)
+        publisher.disconnect()
         
         pass
+    
+    
+    
+    
     
     async def broadcast_data(self, device):
         print("sending device data via socket")

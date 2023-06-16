@@ -29,7 +29,7 @@ def generate_measurment():
 
     choice = random.choices([1, 2, 3], weights=(80, 15, 5), k=1)
         
-    match choice:
+    match choice[0]:
         # eco mode
         case 1:
             consumption = random.uniform(50, 80)
@@ -57,11 +57,11 @@ def publish_power_consumption(client):
     global power
     # Generate and publish power consumption data every 1 seconds
     while(1):
+        time.sleep(1)
         if power == "ON":
             measurment = generate_measurment()
-            print("Publishing: ", measurment)
+            # print("Publishing: ", measurment)
             client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=True)
-        time.sleep(1)
 # ________________________________________________________
 
 
@@ -78,7 +78,7 @@ def report_status(client):
     
     status_message = json.dumps(status)
     
-    print("Publishing: ", status)
+    # print("Publishing: ", status)
     
     client.publish(PUBLISH_STATUS_TOPIC, status_message, qos=1, retain=True)
     pass
@@ -104,6 +104,9 @@ def operate(client):
 
 
 
+def on_log(client, userdata, level, buf):
+    print("log: ",buf)
+    pass
 
 
 
@@ -126,8 +129,11 @@ def on_message(client, userdata, message):
             power = "OFF"
 
         report_status(client)
-      
-    
+        
+    elif "ping" in  message:
+        message = {"device": DEVICE_ID}
+        client.publish(PUBLISH_STATUS_TOPIC, json.dumps(message), qos=1, retain=True)
+
     
     
 if __name__ == '__main__':
@@ -143,6 +149,9 @@ if __name__ == '__main__':
     
     # Set the on_message callback function
     client.on_message = on_message
+    
+    # set log callback function
+    client.on_log = on_log
     
     # Authentication
     client.username_pw_set(USERNAME, PASSWORD)

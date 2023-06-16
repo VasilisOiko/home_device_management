@@ -9,18 +9,11 @@ class MqttClientConfig(AppConfig):
             
     
     def ready(self):
-        from .subscribing import Subscription
-        from .handlers import mqttClient
-
-        
-        # subscribe to listen measurments 
-        # self.client = Subscription()
-        # self.client.startSubscription()
-        
-        
+        from .client import Client
+         
         
         # subscribe to devices measurement topic
-        measurement_tracker = mqttClient("Measurement Tracker")
+        measurement_tracker = Client("Measurement Tracker")
         
         measurement_tracker.connect_to_broker()
         
@@ -29,7 +22,7 @@ class MqttClientConfig(AppConfig):
         measurement_tracker.start()
         
         # subscribe to devices status topic
-        status_tracker = mqttClient("Status Tracker")
+        status_tracker = Client("Status Tracker")
         
         status_tracker.connect_to_broker()
         
@@ -37,5 +30,4 @@ class MqttClientConfig(AppConfig):
         
         status_tracker.start()
         
-        # TODO: make device tracker
         pass

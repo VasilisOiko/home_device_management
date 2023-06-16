@@ -30,10 +30,11 @@ def generate_measurment():
 
     choice = random.choices([1, 2, 3], weights=(55, 40, 5), k=1)
 
-    match choice:
+    match choice[0]:
         # eco mode
         case 1:
             consumption = random.uniform(5, 12)
+            
         
         #  normal mode  
         case 2:
@@ -59,11 +60,11 @@ def publish_power_consumption(client):
     global power
     # Generate and publish power consumption data every 5 seconds
     while(1):
+        time.sleep(1)
         if power == "ON":
             measurment = generate_measurment()
             print("Publishing: ", measurment)
             client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=True)
-        time.sleep(1)
 # ________________________________________________________
 
 # _________________DEVICE STATUS SERVICE_________________
@@ -101,6 +102,10 @@ def operate(client):
     pass
 
 
+def on_log(client, userdata, level, buf):
+    print("log: ",buf)
+    pass
+
 
 # Define function to handle incoming control messages
 def on_message(client, userdata, message):
@@ -135,6 +140,9 @@ if __name__ == '__main__':
 
     # Set the on_message callback function
     client.on_message = on_message
+    
+    # set log callback function
+    client.on_log = on_log
 
     # Authentication
     client.username_pw_set(USERNAME, PASSWORD)

@@ -15,6 +15,7 @@ class Device(models.Model):
     connected = models.BooleanField(default=True, editable=False)
     enabled = models.BooleanField(default=False, editable=False)
     listeningTopic = models.TextField(max_length=50)
+    lastStatusTimestamp = models.DateTimeField(null=True, blank=True, default=None, editable=False)
     space = models.ForeignKey(Space,  related_name='device', on_delete=models.CASCADE)
     
     def __str__(self):

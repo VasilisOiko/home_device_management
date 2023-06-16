@@ -6,7 +6,7 @@ import json
 
 import paho.mqtt.client as mqtt
 
-# _______________ELECTRIC STOVE_______________
+# _______________ECECTRIC STOVE_______________
 
 BROKER_ADDRESS = "172.18.0.3"
 BROKER_PORT = 1883
@@ -14,42 +14,37 @@ BROKER_PORT = 1883
 USERNAME = "root"
 PASSWORD = "toor"
 
-DEVICE_ID = 2
+DEVICE_ID = 3
 
 PUBLISH_MEASURMENT_TOPIC = "sensor/energy/consumption"
+PUBLISH_STATUS_TOPIC = "sensor/energy/status"
 SUBSCRIBE_TOPIC = "sensor/" + str(DEVICE_ID) + "/controller"
 
 
 
-
+# ________________POWER MEASURMENT SERVICE________________
 # Create JSON data
 def generate_measurment():
-    global power
+    
     consumption = random.uniform(36, 43)
 
-    if power == "OFF":
-        choice = 0
-    else:
-        choice = 1
-        
-        
-    match choice:
-        # off
-        case 0:
-            consumption = 0
-        # ON
-        case 1:
-            consumption = random.uniform(1000, 3000)
-        
+    choice = random.choices([1, 2], weights=(80, 20), k=1)
 
+    match choice[0]:
+        # consist temperature
+        case 1:
+            consumption = random.uniform(1000, 1500)
+        
+        #  heating  
+        case 2:
+            consumption = random.uniform(2000, 4000)
 
             
 
     consumption = round(consumption, 3)
     measurement = { 'consumption': consumption ,
                     'device': DEVICE_ID ,
-                    'timestamp': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    'power': power}    # YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]
+                    'timestamp': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")}    # YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]
 
     return json.dumps(measurement)
 
@@ -58,15 +53,54 @@ def generate_measurment():
 
 # Publish data to the MQTT Broker
 def publish_power_consumption(client):
+    global power
     # Generate and publish power consumption data every 5 seconds
     while(1):
-        measurment = generate_measurment()
-        print("Publishing: ", measurment)
-        client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=True)
-        time.sleep(4)
+        time.sleep(1)
+        if power == "ON":
+            measurment = generate_measurment()
+            print("Publishing: ", measurment)
+            client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=True)
+# ________________________________________________________
+
+# _________________DEVICE STATUS SERVICE_________________
+def report_status(client):
+    global power
+    
+    status = {'device': DEVICE_ID, 'enabled': False}
+    
+    if power == 'ON':
+        status['enabled']= True
+    
+    status_message = json.dumps(status)
+    
+    print("Publishing: ", status)
+    
+    client.publish(PUBLISH_STATUS_TOPIC, status_message, qos=1, retain=True)
+    pass
 
 
+def publish_device_status(client):
+    while(1):
+        report_status(client)
+        time.sleep(5)
+    pass
+# ________________________________________________________
 
+
+def operate(client):
+    power_measurement = Thread(target=publish_power_consumption, args=(client,))
+    device_status = Thread(target=publish_device_status, args=(client,))
+    
+    power_measurement.start()
+    device_status.start()
+
+    pass
+
+
+def on_log(client, userdata, level, buf):
+    print("log: ",buf)
+    pass
 
 
 # Define function to handle incoming control messages
@@ -86,7 +120,7 @@ def on_message(client, userdata, message):
             print('Turning device OFF')
             power = "OFF"
     
-
+        report_status(client)
 
 
 if __name__ == '__main__':
@@ -102,6 +136,9 @@ if __name__ == '__main__':
 
     # Set the on_message callback function
     client.on_message = on_message
+    
+    # set log callback function
+    client.on_log = on_log
 
     # Authentication
     client.username_pw_set(USERNAME, PASSWORD)
@@ -116,4 +153,6 @@ if __name__ == '__main__':
     client.loop_start()
 
     # Start publishing power consumption data
-    publish_power_consumption(client)
+    # publish_power_consumption(client)
+    
+    operate(client)

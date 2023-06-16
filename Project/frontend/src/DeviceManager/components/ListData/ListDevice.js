@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 
 import Alert from 'react-bootstrap/Alert';
 
-
 import LoadingAnimation from '../../../components/LoadingAnimation'
 import Device from './Device'
 import { getDevices } from '../../../services/APICalls';

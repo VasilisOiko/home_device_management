@@ -11,7 +11,7 @@ class MeasurementSerializer(serializers.ModelSerializer):
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
-        fields = ['id', 'created', 'alias', 'connected', 'enabled', 'listeningTopic', 'space']
+        fields = ['id', 'created', 'alias', 'connected', 'enabled', 'listeningTopic', 'lastStatusTimestamp','space']
 
 
 class SpaceSerializer(serializers.ModelSerializer):
