@@ -10,7 +10,7 @@ import {getNestSpaces, setDeviceSocket} from '../services/APICalls'
 import LoadingAnimation from '../components/LoadingAnimation'
 import SpaceSelection from './components/SpaceSelection.js'
 import ListDevice from './components/ListDevice'
-import DevicePanel from "./components/DevicePanel";
+import StatisticsPanel from "./components/DeviceStatsPanel/StatisticsPanel";
 
 
   
@@ -21,7 +21,7 @@ function Home()
   const [spaces, setSpaces] = useState([]);  // set state for spaces and devices
   const [selectedSpace, setSelectedSpace] = useState({id: 0, name: ""}); 
   
-  const [socketData, setSocketData] = useState([]);
+  const [socketData, setSocketData] = useState({});
 
   const [panel, setPanel] = useState({"show": false, "device": undefined})
 
@@ -69,8 +69,6 @@ function Home()
 
 						return newState
 					})
-
-
 				}
 
 				/* set socket for the device */
@@ -80,34 +78,39 @@ function Home()
 				device.socket.onmessage = (receive) => {
 
 					let message = JSON.parse(receive.data)["message"];
+
 				
 					// console.log("[Home.js] message from device: " + devices[index].id + " ")
 					// console.log("[Home.js] message from device: ", receive) 
 					
 					// socket state approach
 					setSocketData((prevSocketData) => {
-						const updatedArray = [...prevSocketData];
+						const updatedArray = {...prevSocketData};
 
-						if(prevSocketData[device.id] !== undefined)
+						if(prevSocketData[device.id.toString()] !== undefined)
 						{
 							if (message.consumption === undefined)
 							{
-								message.consumption = prevSocketData[device.id].consumption
+								message.consumption = prevSocketData[device.id.toString()].consumption
 							}
 							if (message.connected === undefined)
 							{
-								message.connected = prevSocketData[device.id].connected
+								message.connected = prevSocketData[device.id.toString()].connected
 							}
 							if (message.enabled === undefined)
 							{
-								message.enabled = prevSocketData[device.id].enabled
+								message.enabled = prevSocketData[device.id.toString()].enabled
 							}
 						}
-						updatedArray[device.id] = message;
 
+						
+						updatedArray[device.id.toString()] = message;
+
+						console.log("[Home/onMessage]: ", updatedArray);
+						
 						return updatedArray; 
 					})
-
+					
 				}
         	});
     	});
@@ -148,7 +151,7 @@ function Home()
 			</Badge>
 		</h2>
 
-		<DevicePanel show={panel.show} device={panel.device}/>
+		<StatisticsPanel show={panel.show} device={panel.device}/>
 
 		<Row>
 			<Col>

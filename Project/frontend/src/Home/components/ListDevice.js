@@ -16,7 +16,7 @@ function ListDevice({devices, socketData})
         
         (devices === undefined || socketData === undefined) ?
 
-            <LoadingAnimation className='center'/> :
+        <LoadingAnimation className='center'/> :
 
             devices.length === 0 ?
 

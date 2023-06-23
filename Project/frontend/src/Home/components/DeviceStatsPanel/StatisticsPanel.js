@@ -4,9 +4,11 @@ import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 
+import ConsumptionGraph from './ConsumptionGraph';
 
 
-function DevicePanel({show, device})
+
+function StatisticsPanel({show, device})
 {
 
 
@@ -29,6 +31,9 @@ function DevicePanel({show, device})
             bg={"light"}
             text={'dark'}>
                 <Card.Header>{device.alias}</Card.Header>
+                <Row className="justify-content-md-center">
+                    <ConsumptionGraph device={device}/>
+                </Row>
                 <Row>
                     <Col>
                         <Card 
@@ -60,6 +65,6 @@ function DevicePanel({show, device})
   )
 }
 
-export default DevicePanel
+export default StatisticsPanel
 
 
