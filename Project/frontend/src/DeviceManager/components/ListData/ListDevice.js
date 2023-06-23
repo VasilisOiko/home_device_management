@@ -1,41 +1,21 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 
-import Alert from 'react-bootstrap/Alert';
+import Card from 'react-bootstrap/Card';
 
-import LoadingAnimation from '../../../components/LoadingAnimation'
-import Device from './Device'
-import { getDevices } from '../../../services/APICalls';
-
-
-
-function ListDevice({spaceId})
-{
-
-  const [devices, setDevices] = useState([])
-
-  useEffect(() => {
-    getDevices("?space=" + spaceId)
-    .then((result) => {
-      setDevices(result.data)
-    })
-  
-  }, [spaceId])
-  
+function ListDevice({device}) {
 
   return (
-    devices === undefined ?
+    <Card key={device.id} bg={'light'} text={'dark'}>
+        <Card.Header>
+            {device.alias}
+        </Card.Header>
 
-    <LoadingAnimation/> :
-
-    devices.length === 0 ?
-
-    <Alert key={"secondary"} variant={"secondary"}>Empty</Alert> :
-    
-    <div>
-      {devices.map((device) => <Device key={device.id} device={device}/> )}
-    </div>
-
-    
+        <Card.Body>
+            <Card.Text>
+                Buttons and other components
+            </Card.Text>
+        </Card.Body>
+    </Card>
   )
 }
 

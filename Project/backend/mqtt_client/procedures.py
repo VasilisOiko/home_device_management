@@ -53,7 +53,7 @@ def read_status(client, userdata, msg):
         device.save()
         
         # create thread to check after 8 seconds if the status has changed
-        track_device_connection = Thread(target=update_connectivity, args=(device.id, ))
+        track_device_connection = Thread(target=update_connectivity, args=(device.id, 8, ))
         #deploy thread
         track_device_connection.start()
         
@@ -64,10 +64,10 @@ def read_status(client, userdata, msg):
 
 
 
-def update_connectivity(id):
+def update_connectivity(id, delay):
     '''checks if the device update their status in past 8 seconds'''
     
-    sleep(8)
+    sleep(delay)
     
     # read from database as a new timestamp may registered 
     device = Device.objects.get(pk=id)
@@ -83,8 +83,8 @@ def update_connectivity(id):
         # read last status timestamp
         deviceTimestamp = device.lastStatusTimestamp
         
-        # if device update the status in the last 8 seconds keep the state
-        if current_time - deviceTimestamp < timedelta(seconds=8):
+        # if device update the status in the last "delay" seconds keep the state
+        if current_time - deviceTimestamp < timedelta(seconds=delay):
             return
             # __________case terminate function__________
         

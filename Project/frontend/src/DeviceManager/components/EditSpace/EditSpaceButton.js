@@ -8,8 +8,6 @@ import EditSpaceForm from './EditSpaceForm';
 
 function EditSpaceButton({space})
 {
-    console.log("[EditSpaceButton]", space);
-
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);

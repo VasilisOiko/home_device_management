@@ -3,7 +3,7 @@ import Stack from 'react-bootstrap/Stack';
 
 
 /* My components */
-import {getSpaces} from '../services/APICalls'
+import {getNestSpaces} from '../services/APICalls'
 import ListSpace from "./components/ListData/ListSpace";
 import CreateSpaceButton from "./components/CreateSpace/CreateSpaceButton";
 import AddDeviceButton from "./components/AddDevice/AddDeviceButton";
@@ -18,11 +18,12 @@ function DeviceManager()
   
 
   useEffect(() => {
-    getSpaces()
-    .then((result) => {
-      setSpaces(result.data)
-    })
-  }, [])
+    getNestSpaces()
+    .then( (result) =>
+      {
+        setSpaces(result.data)
+      })
+    }, [])
   
 
 
@@ -37,7 +38,6 @@ function DeviceManager()
         <AddDeviceButton/>
       
       </Stack>
-
 
 
       <ListSpace spaces={spaces}/>

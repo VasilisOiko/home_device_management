@@ -1,9 +1,9 @@
 import React from 'react'
 
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import Badge from 'react-bootstrap/Badge';
-import Switch from '@mui/material/Switch'
+import {Badge, Card, Col } from 'react-bootstrap';
+import Switch from '@mui/material/Switch';
+import { LineChart, Line } from 'recharts';
+
 
 
 
@@ -45,40 +45,44 @@ function switchDevice(event, device)
     device.socket.send(JSON.stringify(message))    
 }
 
-function Device({device, socketData}) {
+function Device({device, socketData})
+{
   return (
-    <Col key={device.id}>
+    <div>
 
-        <Card key={device.id}
-        bg={'light'}
-        text={'dark'}>
 
-            <Card.Header
-            // as="button"
-            // onClick={() => controlPanel(device.id, device.alias)}
-            // aria-controls={device.id}
-            // aria-expanded={panelStatus}
-            >
-                {device.alias}
-            </Card.Header>
+        <Col key={device.id}>
 
-            <Card.Body>
+            <Card key={device.id}
+            bg={'light'}
+            text={'dark'}>
 
-                <Card.Text>
-                    Consumption: <Badge bg="secondary">{getConsumption(socketData[device.id])}</Badge>
-                    <br/>
-                    OFF <Switch
-                    disabled = {isDefined(socketData[device.id], "connected") ? !socketData[device.id].connected : false}
-                    checked={isDefined(socketData[device.id], "enabled") ? socketData[device.id].enabled : false}
-                    onChange={(event) => {switchDevice(event, device)}}
-                    /> ON <br/>
-                </Card.Text>
+                <Card.Header
+                as="button"
+                onClick={device.handlePanel}
+                aria-controls={"card-header-button"}
+                aria-expanded={true}>
+                    {device.alias}
+                </Card.Header>
 
-            </Card.Body>
+                <Card.Body>
 
-        </Card>
+                    <Card.Text>
+                        Consumption: <Badge bg="secondary">{getConsumption(socketData[device.id])}</Badge>
+                        <br/>
+                        OFF <Switch
+                        disabled = {isDefined(socketData[device.id], "connected") ? !socketData[device.id].connected : false}
+                        checked={isDefined(socketData[device.id], "enabled") ? socketData[device.id].enabled : false}
+                        onChange={(event) => {switchDevice(event, device)}}
+                        /> ON <br/>
+                    </Card.Text>
 
-    </Col>
+                </Card.Body>
+
+            </Card>
+
+        </Col>
+    </div>
   )
 }
 

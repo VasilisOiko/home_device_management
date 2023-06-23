@@ -6,7 +6,7 @@ import json
 
 import paho.mqtt.client as mqtt
 
-# _______________ECECTRIC STOVE_______________
+# _______________ELECTRIC STOVE_______________
 
 BROKER_ADDRESS = "172.18.0.3"
 BROKER_PORT = 1883

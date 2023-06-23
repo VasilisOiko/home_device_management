@@ -4,12 +4,13 @@ import React from 'react'
 import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 
 /* My components */
 import LoadingAnimation from '../../../components/LoadingAnimation';
-import ListDevice from './ListDevice';
 import EditSpaceButton from '../EditSpace/EditSpaceButton';
 import RemoveSpaceButton from '../RemoveSpace/RemoveSpaceButton';
+import ListDevice from './ListDevice'
 
 
 
@@ -37,7 +38,18 @@ function ListSpace({spaces})
                                 {space.name}
                             </Accordion.Header>
                             <Accordion.Body>
-                                <ListDevice spaceId={space.id}/>
+
+                                {
+                                    space.device.length === 0 ?
+
+                                    <Alert key={"secondary"} variant={"secondary"}>Empty</Alert>
+                                    :
+                                    <div>
+                                    {space.device.map((device) => <ListDevice key={device.id} device={device}/> )}
+                                    </div>
+                                }
+
+                                {/* <ListDevice devices={space.device}/> */}
                             </Accordion.Body>
                         </Accordion.Item>
                     </Col>
