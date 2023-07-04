@@ -6,7 +6,7 @@ import random
 
 
 # headers = {'content-type': 'application/json'}
-url = 'http://172.18.0.2:8000/api/measurments/'
+url = 'http://172.18.0.2:8000/api/measurements/'
 device_id = 9
 consumption = random.uniform(36, 43)
 
@@ -37,11 +37,10 @@ consumption = random.uniform(36, 43)
     
 #     print(measurement)
     
-object = {}
 
-for i in range(2351,5000):
-    response = requests.delete(url + str(i) + "/")
-    # time.sleep(0.1)
 
-    print (i, response)
+response = requests.delete(url)
+# time.sleep(0.1)
+
+print (response)
     

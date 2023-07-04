@@ -16,6 +16,7 @@ def sentMeasurment(sender, instance, created, **kwargs):
         # get device channel
         channel_layer = get_channel_layer()
         device_group_name = str(instance.device.id)
+        
               
         # make measurement message
         measurment = {"consumption": instance.consumption,
@@ -48,10 +49,12 @@ def setDeviceTopic(sender, instance, created, **kwargs):
     channel_layer = get_channel_layer()
     device_group_name = str(instance.id)
     
+    
     # make status message
     status = {  "device": instance.id,
                 "connected": instance.connected,
-                "enabled": instance.enabled}
+                "enabled": instance.enabled,
+                "timestamp": str(instance.lastStatusTimestamp)}
     
     
     # bond method with data

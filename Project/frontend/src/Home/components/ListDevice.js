@@ -29,7 +29,7 @@ function ListDevice({devices, socketData})
             <Row xs={2} md={2} className="g-4">
 
                 {devices.map((device, key) => 
-                <Device key={key} device={device} socketData={socketData}/>)}
+                <Device key={key} device={device} liveData={socketData[device.id]}/>)}
 
             </Row>
     )

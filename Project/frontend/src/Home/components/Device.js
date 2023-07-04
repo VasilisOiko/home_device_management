@@ -2,7 +2,6 @@ import React from 'react'
 
 import {Badge, Card, Col } from 'react-bootstrap';
 import Switch from '@mui/material/Switch';
-import { LineChart, Line } from 'recharts';
 
 
 
@@ -27,7 +26,7 @@ function getConsumption(data)
     }
     else if(isDefined(data, "consumption"))
     {
-        return data.consumption
+        return data.consumption.at(-1).value
     }
 
 }
@@ -45,7 +44,7 @@ function switchDevice(event, device)
     device.socket.send(JSON.stringify(message))    
 }
 
-function Device({device, socketData})
+function Device({device, liveData})
 {
   return (
     <div>
@@ -68,11 +67,11 @@ function Device({device, socketData})
                 <Card.Body>
 
                     <Card.Text>
-                        Consumption: <Badge bg="secondary">{getConsumption(socketData[device.id])}</Badge>
+                        Consumption: <Badge bg="secondary">{getConsumption(liveData)}</Badge>
                         <br/>
                         OFF <Switch
-                        disabled = {isDefined(socketData[device.id], "connected") ? !socketData[device.id].connected : false}
-                        checked={isDefined(socketData[device.id], "enabled") ? socketData[device.id].enabled : false}
+                        disabled = {isDefined(liveData, "connected") ? !liveData.connected : false}
+                        checked={isDefined(liveData, "enabled") ? liveData.enabled : false}
                         onChange={(event) => {switchDevice(event, device)}}
                         /> ON <br/>
                     </Card.Text>

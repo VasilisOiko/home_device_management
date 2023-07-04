@@ -61,7 +61,7 @@ def publish_power_consumption(client):
         if power == "ON":
             measurment = generate_measurment()
             # print("Publishing: ", measurment)
-            client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=True)
+            client.publish(PUBLISH_MEASURMENT_TOPIC, measurment, qos=1, retain=False)
 # ________________________________________________________
 
 
@@ -71,7 +71,9 @@ def publish_power_consumption(client):
 def report_status(client):
     global power
     
-    status = {'device': DEVICE_ID, 'enabled': False}
+    status = {'device': DEVICE_ID,
+              'enabled': False,
+              'timestamp': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")}
     
     if power == 'ON':
         status['enabled']= True
@@ -80,7 +82,7 @@ def report_status(client):
     
     # print("Publishing: ", status)
     
-    client.publish(PUBLISH_STATUS_TOPIC, status_message, qos=1, retain=True)
+    client.publish(PUBLISH_STATUS_TOPIC, status_message, qos=1, retain=False)
     pass
 
 
@@ -129,10 +131,6 @@ def on_message(client, userdata, message):
             power = "OFF"
 
         report_status(client)
-        
-    elif "ping" in  message:
-        message = {"device": DEVICE_ID}
-        client.publish(PUBLISH_STATUS_TOPIC, json.dumps(message), qos=1, retain=True)
 
     
     

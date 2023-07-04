@@ -37,7 +37,8 @@ def read_status(client, userdata, msg):
     data = json.loads(msg.payload.decode())
     
     status = {  "device": data["device"],
-                "enabled": data["enabled"]}
+                "enabled": data["enabled"],
+                "timestamp": data["timestamp"]}
     
     try:
         # find the device in database
@@ -45,9 +46,9 @@ def read_status(client, userdata, msg):
                 
         
         # update enabled field of device
-        device.enabled = data["enabled"]
+        device.enabled = status["enabled"]
         device.connected = True
-        device.lastStatusTimestamp = timezone.now()
+        device.lastStatusTimestamp = status["timestamp"]
                 
         #save instance
         device.save()

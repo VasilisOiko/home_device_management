@@ -7,12 +7,23 @@ import Badge from 'react-bootstrap/Badge';
 
 /* my components */
 import {getNestSpaces, setDeviceSocket} from '../services/APICalls'
+import { saveToMessageQueue } from "../services/SocketHandlers";
 import LoadingAnimation from '../components/LoadingAnimation'
 import SpaceSelection from './components/SpaceSelection.js'
 import ListDevice from './components/ListDevice'
 import StatisticsPanel from "./components/DeviceStatsPanel/StatisticsPanel";
 
+function initConsumption(device)
+{
+	const measurements = [{
+		"value": 0,
+		"timestamp": new Date()
+	}]
 
+	console.log("[home/initConsumption]: ", measurements, device);
+
+	return measurements
+}
   
 function Home()
 {
@@ -32,8 +43,32 @@ function Home()
 		getNestSpaces()
 		.then( (result) =>
 		{
-			setSpaces(result.data)
+			const spaces = result.data
+			setSpaces(spaces)
+
+			/* initialize the socketData with properties in order to update them */
+			const initSocketData = {}
+			spaces.forEach(space => {
+				space.device.forEach(device => {
+
+					initSocketData[device.id.toString()] = {
+						"connected": device.connected,
+						"enabled": device.enabled,
+						"timestamp": device.timestamp,
+						"device": device.id,
+						"consumption": initConsumption(device.id)
+					}
+				});
+			});
+
+			console.log("[Home/useEffect", initSocketData)
+			setSocketData(initSocketData)
+
 		})
+
+		return () => {
+			setSpaces([])
+		}
 	}, [])
    
 
@@ -48,7 +83,7 @@ function Home()
 		spaces.forEach(space => {
 			space.device.forEach(device => {
 			
-				/* device can control panel values  */
+				/* device method control panel values  */
 				device.handlePanel = () => {
 					setPanel((state) => {
 
@@ -66,7 +101,6 @@ function Home()
 						}
 						
 
-
 						return newState
 					})
 				}
@@ -75,43 +109,7 @@ function Home()
 				device.socket = setDeviceSocket(device.id)
 
 				/* message handling */
-				device.socket.onmessage = (receive) => {
-
-					let message = JSON.parse(receive.data)["message"];
-
-				
-					// console.log("[Home.js] message from device: " + devices[index].id + " ")
-					// console.log("[Home.js] message from device: ", receive) 
-					
-					// socket state approach
-					setSocketData((prevSocketData) => {
-						const updatedArray = {...prevSocketData};
-
-						if(prevSocketData[device.id.toString()] !== undefined)
-						{
-							if (message.consumption === undefined)
-							{
-								message.consumption = prevSocketData[device.id.toString()].consumption
-							}
-							if (message.connected === undefined)
-							{
-								message.connected = prevSocketData[device.id.toString()].connected
-							}
-							if (message.enabled === undefined)
-							{
-								message.enabled = prevSocketData[device.id.toString()].enabled
-							}
-						}
-
-						
-						updatedArray[device.id.toString()] = message;
-
-						console.log("[Home/onMessage]: ", updatedArray);
-						
-						return updatedArray; 
-					})
-					
-				}
+				device.socket.onmessage = (receive) => saveToMessageQueue(receive, device, 40, setSocketData)
         	});
     	});
 	}
@@ -151,7 +149,7 @@ function Home()
 			</Badge>
 		</h2>
 
-		<StatisticsPanel show={panel.show} device={panel.device}/>
+		<StatisticsPanel show={panel.show} device={panel.device} data={socketData}/>
 
 		<Row>
 			<Col>

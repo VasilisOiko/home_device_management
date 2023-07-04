@@ -75,8 +75,8 @@ function setDeviceSocket(id)
 {
   let socket = new WebSocket(wsURL + id + "/")
   
-  socket.onopen = () => console.log("connected from device: ", id);
-  socket.onClose = () => console.log("disconnected from device: ", id);
+  socket.onopen = () => console.log("connected to device: ", id);
+  socket.onclose = () => console.log("disconnected to device: ", id);
 
 
   return socket
