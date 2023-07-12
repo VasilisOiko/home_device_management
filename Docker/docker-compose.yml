@@ -1,0 +1,114 @@
+version: '3'
+
+name: home_device_manager
+services:
+    # React fronted project
+    frontend:
+        container_name: frontend
+        image: react_env
+        build:
+            context: .
+            dockerfile: frontend.Dockerfile
+        stdin_open: true
+        environment:
+            - TZ=Europe/Athens
+            - WATCHPACK_POLLING=true
+            - NODE_ENV=development
+            - CI=true
+        volumes:
+            - "../Project/frontend:/app"
+        restart: unless-stopped
+        privileged: true
+        networks:
+            home_network:
+                ipv4_address: "172.18.0.5"
+        ports:
+            - "3000:3000"
+
+    # Django backend project
+    backend:
+        container_name: backend
+        image: django-python
+        build: 
+            context: .
+            dockerfile: backend.Dockerfile
+        stdin_open: true
+        environment:
+            - TZ=Europe/Athens
+        volumes:
+            - "../Project/backend:/home/app"
+        restart: unless-stopped
+        privileged: true
+        networks:
+            home_network:
+                ipv4_address: "172.18.0.2"
+        dns_search: devicemanager
+        ports:
+            - "8000:8000"
+
+    # MQTT broker
+    mqttbroker:
+        container_name: mqttbroker
+        image: mqtt-broker
+        build:
+            context: .
+            dockerfile: mqttbroker.Dockerfile
+        stdin_open: true
+        command: mosquitto -v -c /mosquitto/config/mosquitto.conf
+        environment:
+            - TZ=Europe/Athens
+            - CHOKIDAR_USEPOLLING=true
+        volumes:
+            - ../Project/mqtt-broker:/mosquitto
+        restart: unless-stopped
+        privileged: true
+        networks:
+            home_network:
+                ipv4_address: "172.18.0.3"
+        ports:
+            - "1883:1883"
+            - "9001:9001"
+        
+
+    devices:
+        container_name: devices
+        image: iot-network
+        build: 
+            context: .
+            dockerfile: devices.Dockerfile
+        stdin_open: true
+        environment:
+            - TZ=Europe/Athens
+        volumes:
+            - "../Project/devices:/home/app"
+        restart: unless-stopped
+        privileged: true
+        networks:
+            home_network:
+                ipv4_address: "172.18.0.4"
+
+    redis_server:
+        container_name: redis
+        image: redis
+        stdin_open: true
+        environment:
+            - TZ=Europe/Athens
+        volumes:
+            - "../Project/redis-server:/home/app"
+        restart: unless-stopped
+        privileged: true
+        networks:
+            home_network:
+                ipv4_address: "172.18.0.6"
+        ports:
+            - "6379:6379"
+
+
+
+networks:
+    home_network:
+        name: smart_home
+        ipam:
+            config:
+                - subnet: "172.18.0.0/16"
+                  gateway: "172.18.0.1"
